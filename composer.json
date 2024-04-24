@@ -1,0 +1,35 @@
+{
+  "name": "almaviacx/ibexaimportexportbundle",
+  "description": "Bundle that add a way to connect to Ibexa using the SAML protocol",
+  "keywords": [
+    "ibexa",
+    "bundle"
+  ],
+  "homepage": "https://github.com/Novactive/AlmaviaCXIbexaSamlBundle",
+  "type": "ibexa-bundle",
+  "authors": [
+    {
+      "name": "AlmaviaCX",
+      "homepage": "https://almaviacx.com/expertises/web-mobile/",
+      "email": "dirtech.web@almaviacx.com"
+    }
+  ],
+  "license": [
+    "MIT"
+  ],
+  "require": {
+    "php": "^7.3 || ^8.0",
+  },
+  "autoload": {
+    "psr-4": {
+      "AlmaviaCX\\Bundle\\IbexaImportExportBundle\\": "src/bundle",
+      "AlmaviaCX\\Bundle\\IbexaImportExport\\": "src/lib"
+    }
+  },
+  "extra": {
+    "thanks": {
+      "name": "hslavich/oneloginsaml-bundle",
+      "url": "https://github.com/hslavich/OneloginSamlBundle"
+    }
+  }
+}

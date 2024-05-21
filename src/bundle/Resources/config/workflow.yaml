@@ -1,0 +1,18 @@
+services:
+    AlmaviaCX\Bundle\IbexaImportExport\Workflow\WorkflowConfigurationRepository:
+        arguments:
+            $entityManager: '@ibexa.doctrine.orm.entity_manager'
+
+    AlmaviaCX\Bundle\IbexaImportExport\Workflow\WorkflowExecutor:
+    AlmaviaCX\Bundle\IbexaImportExport\Workflow\WorkflowRegistry:
+        arguments:
+            $workflows: !tagged_iterator almaviacx.importexport.worflow
+            $configurableWorkflowFactory: '@AlmaviaCX\Bundle\IbexaImportExport\Workflow\ConfigurableWorkflowFactory'
+            $workflowConfigurationRepository: '@AlmaviaCX\Bundle\IbexaImportExport\Workflow\WorkflowConfigurationRepository'
+
+
+    AlmaviaCX\Bundle\IbexaImportExport\Workflow\ConfigurableWorkflowFactory:
+        arguments:
+            $writerRegistry: '@AlmaviaCX\Bundle\IbexaImportExport\Writer\WriterRegistry'
+            $readerRegistry: '@AlmaviaCX\Bundle\IbexaImportExport\Reader\ReaderRegistry'
+            $stepRegistry: '@AlmaviaCX\Bundle\IbexaImportExport\Step\StepRegistry'

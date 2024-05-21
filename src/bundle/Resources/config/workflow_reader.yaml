@@ -1,0 +1,10 @@
+services:
+    AlmaviaCX\Bundle\IbexaImportExport\Reader\ReaderRegistry:
+        arguments:
+            $readers: !tagged_iterator almaviacx.importexport.reader
+
+    AlmaviaCX\Bundle\IbexaImportExport\Reader\IbexaContentListReader:
+        arguments:
+            $searchService: '@Ibexa\Contracts\Core\Repository\SearchService'
+        tags:
+            - almaviacx.importexport.reader

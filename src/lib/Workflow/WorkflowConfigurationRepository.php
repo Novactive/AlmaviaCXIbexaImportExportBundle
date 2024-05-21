@@ -1,0 +1,44 @@
+<?php
+
+declare(strict_types=1);
+
+namespace AlmaviaCX\Bundle\IbexaImportExport\Workflow;
+
+use Doctrine\ORM\EntityManagerInterface;
+
+class WorkflowConfigurationRepository
+{
+    protected EntityManagerInterface $entityManager;
+
+    public function __construct(EntityManagerInterface $entityManager)
+    {
+        $this->entityManager = $entityManager;
+    }
+
+    public function find(string $identifier): ?WorkflowConfiguration
+    {
+        return $this->entityManager->getRepository(WorkflowConfiguration::class)->findOneBy(
+            ['identifier' => $identifier]
+        );
+    }
+
+    public function save(WorkflowConfiguration $configuration)
+    {
+        $this->entityManager->persist($configuration);
+        $this->entityManager->flush();
+    }
+
+    public function getAll(): array
+    {
+        $qb = $this->entityManager->createQueryBuilder();
+        $qb->select('wc.identifier, wc.name')
+           ->from(WorkflowConfiguration::class, 'wc');
+
+        $workflows = [];
+        foreach ($qb->getQuery()->getArrayResult() as $item) {
+            dd($item);
+        }
+
+        return $workflows;
+    }
+}

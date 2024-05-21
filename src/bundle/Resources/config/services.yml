@@ -1,2 +1,35 @@
 services:
-    AlmaviaCX\Bundle\IbexaImportExport\Workflow\WorkflowExecutor:
+    AlmaviaCX\Bundle\IbexaImportExportBundle\Controller\Admin\JobController:
+        autowire: true
+        arguments:
+            $formFactory: '@form.factory'
+            $notificationHandler: '@Ibexa\AdminUi\Notification\TranslatableNotificationHandler'
+            $jobCreateFlow: '@AlmaviaCX\Bundle\IbexaImportExport\Job\Form\JobCreateFlow'
+            $jobService: '@AlmaviaCX\Bundle\IbexaImportExport\Job\JobService'
+            $twig: '@twig'
+        tags:
+            - controller.service_arguments
+
+    AlmaviaCX\Bundle\IbexaImportExportBundle\Controller\Admin\WriterController:
+        autowire: true
+        tags:
+            - controller.service_arguments
+
+    AlmaviaCX\Bundle\IbexaImportExport\AdminUi\Menu\JobCreateRightSidebarBuilder:
+        public: true
+        arguments:
+            $eventDispatcher: '@event_dispatcher'
+            $factory: '@Ibexa\AdminUi\Menu\MenuItemFactory'
+            $translator: '@translator'
+        tags:
+            - { name: knp_menu.menu_builder, method: build, alias: almaviacx.import_export.menu.job_create.sidebar_right }
+
+    AlmaviaCX\Bundle\IbexaImportExport\Resolver\WriterFilepathResolver:
+        arguments:
+            $parameterBag: '@parameter_bag'
+
+    AlmaviaCX\Bundle\IbexaImportExport\Event\Subscriber\RemoveWrittenFilesEventSubscriber:
+        arguments:
+            $filesystem: '@filesystem'
+        tags:
+            - kernel.event_subscriber

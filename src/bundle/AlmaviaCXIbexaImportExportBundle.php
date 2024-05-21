@@ -4,8 +4,21 @@ declare(strict_types=1);
 
 namespace AlmaviaCX\Bundle\IbexaImportExportBundle;
 
+use AlmaviaCX\Bundle\IbexaImportExportBundle\DependencyInjection\Security\Provider\PolicyProvider;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 class AlmaviaCXIbexaImportExportBundle extends Bundle
 {
+    /**
+     * Builds the bundle.
+     *
+     * It is only ever called once when the cache is empty.
+     */
+    public function build(ContainerBuilder $container): void
+    {
+        parent::build($container);
+        $ibexaExtension = $container->getExtension('ibexa');
+        $ibexaExtension->addPolicyProvider(new PolicyProvider());
+    }
 }

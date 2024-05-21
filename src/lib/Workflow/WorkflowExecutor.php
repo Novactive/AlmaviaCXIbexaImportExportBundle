@@ -1,18 +1,18 @@
 <?php
-declare( strict_types=1 );
+
+declare(strict_types=1);
 
 namespace AlmaviaCX\Bundle\IbexaImportExport\Workflow;
 
-use Port\Workflow;
+use AlmaviaCX\Bundle\IbexaImportExport\Result\Result;
 
 class WorkflowExecutor
 {
     /**
      * @throws \Port\Exception
      */
-    public function __invoke( WorkflowFactoryInterface $workflowFactory, array $options): \Port\Result
+    public function __invoke(WorkflowInterface $workflow, array $options): Result
     {
-        $workflow = ($workflowFactory)( $options);
-        return $workflow->process();
+        return ($workflow)($options);
     }
 }

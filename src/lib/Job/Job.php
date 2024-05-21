@@ -1,8 +1,16 @@
 <?php
-declare( strict_types=1 );
+
+declare(strict_types=1);
 
 namespace AlmaviaCX\Bundle\IbexaImportExport\Job;
 
+use DateTimeImmutable;
+use Doctrine\ORM\Mapping as ORM;
+
+/**
+ * @ORM\Entity()
+ * @ORM\Table(name="import_export_job")
+ */
 class Job
 {
     public const STATUS_PENDING = 0;
@@ -10,22 +18,81 @@ class Job
     public const STATUS_COMPLETED = 2;
     public const STATUS_QUEUED = 3;
 
+    /**
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="UUID")
+     * @ORM\Column
+     */
+    protected int $id;
+
+    /**
+     * @ORM\Column
+     */
+    private string $label;
+
+    /**
+     * @ORM\Column
+     */
     protected string $workflowIdentifier;
 
+    /**
+     * @ORM\Column
+     */
     protected int $status = self::STATUS_PENDING;
 
-    protected ?\DateTimeInterface $startTime = null;
+    /**
+     * @ORM\Column(type="datetime")
+     */
+    private DateTimeImmutable $requestedDate;
 
-    protected ?\DateTimeInterface $endTime = null;
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    protected ?DateTimeImmutable $startTime = null;
 
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    protected ?DateTimeImmutable $endTime = null;
+
+    /**
+     * @ORM\Column
+     */
+    protected int $creatorId;
+
+    /**
+     * @ORM\Column
+     */
     protected array $options = [];
 
     /**
-     * @return string
+     * @ORM\Column
      */
+    protected array $writerResults = [];
+
+    public function getId(): int
+    {
+        return $this->id;
+    }
+
+    public function getLabel(): string
+    {
+        return $this->label;
+    }
+
+    public function setLabel(string $label): void
+    {
+        $this->label = $label;
+    }
+
     public function getWorkflowIdentifier(): string
     {
         return $this->workflowIdentifier;
+    }
+
+    public function setWorkflowIdentifier(string $workflowIdentifier): void
+    {
+        $this->workflowIdentifier = $workflowIdentifier;
     }
 
     public function getStatus(): int
@@ -33,36 +100,68 @@ class Job
         return $this->status;
     }
 
-    public function setStatus( int $status ): void
+    public function setStatus(int $status): void
     {
         $this->status = $status;
     }
 
-    public function getStartTime(): ?\DateTimeInterface
+    public function getRequestedDate(): DateTimeImmutable
+    {
+        return $this->requestedDate;
+    }
+
+    public function setRequestedDate(DateTimeImmutable $requestedDate): void
+    {
+        $this->requestedDate = $requestedDate;
+    }
+
+    public function getStartTime(): ?DateTimeImmutable
     {
         return $this->startTime;
     }
 
-    public function setStartTime( ?\DateTimeInterface $startTime ): void
+    public function setStartTime(?DateTimeImmutable $startTime): void
     {
         $this->startTime = $startTime;
     }
 
-    public function getEndTime(): ?\DateTimeInterface
+    public function getEndTime(): ?DateTimeImmutable
     {
         return $this->endTime;
     }
 
-    public function setEndTime( ?\DateTimeInterface $endTime ): void
+    public function setEndTime(?DateTimeImmutable $endTime): void
     {
         $this->endTime = $endTime;
     }
 
-    /**
-     * @return array
-     */
+    public function getCreatorId(): int
+    {
+        return $this->creatorId;
+    }
+
+    public function setCreatorId(int $creatorId): void
+    {
+        $this->creatorId = $creatorId;
+    }
+
     public function getOptions(): array
     {
         return $this->options;
+    }
+
+    public function setOptions(array $options): void
+    {
+        $this->options = $options;
+    }
+
+    public function getWriterResults(): array
+    {
+        return $this->writerResults;
+    }
+
+    public function setWriterResults(array $writerResults): void
+    {
+        $this->writerResults = $writerResults;
     }
 }

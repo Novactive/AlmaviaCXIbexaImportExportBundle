@@ -1,0 +1,10 @@
+services:
+    AlmaviaCX\Bundle\IbexaImportExport\Writer\WriterRegistry:
+        arguments:
+            $writers: !tagged_iterator almaviacx.importexport.writer
+
+    AlmaviaCX\Bundle\IbexaImportExport\Writer\CsvWriter:
+        arguments:
+            $filepathResolver: '@AlmaviaCX\Bundle\IbexaImportExport\Resolver\WriterFilepathResolver'
+        tags:
+            - { name: almaviacx.importexport.writer }

@@ -6,5 +6,6 @@ services:
     AlmaviaCX\Bundle\IbexaImportExport\Writer\CsvWriter:
         arguments:
             $filepathResolver: '@AlmaviaCX\Bundle\IbexaImportExport\Resolver\WriterFilepathResolver'
+            $filesystem: '@filesystem'
         tags:
             - { name: almaviacx.importexport.writer }

@@ -41,6 +41,7 @@ class JobService
 
         $job->setStatus(Job::STATUS_COMPLETED);
         $job->setEndTime($results->getEndTime());
+        $job->setExceptions($results->getExceptions());
         $job->setWriterResults($results->getWriterResults());
         $this->jobRepository->save($job);
     }

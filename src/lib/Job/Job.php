@@ -68,6 +68,11 @@ class Job
     /**
      * @ORM\Column
      */
+    protected array $exceptions = [];
+
+    /**
+     * @ORM\Column
+     */
     protected array $writerResults = [];
 
     public function getId(): int
@@ -153,6 +158,16 @@ class Job
     public function setOptions(array $options): void
     {
         $this->options = $options;
+    }
+
+    public function getExceptions(): array
+    {
+        return $this->exceptions;
+    }
+
+    public function setExceptions(array $exceptions): void
+    {
+        $this->exceptions = $exceptions;
     }
 
     public function getWriterResults(): array

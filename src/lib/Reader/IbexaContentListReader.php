@@ -11,7 +11,6 @@ use Ibexa\Contracts\Core\Repository\Values\Content\Query;
 use Ibexa\Contracts\Core\Repository\Values\Content\Query\Criterion\LogicalAnd;
 use Ibexa\Contracts\Core\Repository\Values\Content\Query\Criterion\ParentLocationId;
 use Iterator;
-use Port\Reader;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -34,7 +33,7 @@ class IbexaContentListReader extends AbstractReader
 
         $iterator = new BatchIterator(new ContentSearchAdapter($this->searchService, $query));
 
-        return new Reader\CountableIteratorReader($iterator);
+        return $iterator;
     }
 
     protected function configureOptions(OptionsResolver $optionsResolver)

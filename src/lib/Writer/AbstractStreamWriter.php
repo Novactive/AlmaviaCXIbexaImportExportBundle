@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace AlmaviaCX\Bundle\IbexaImportExport\Writer;
 
 use AlmaviaCX\Bundle\IbexaImportExport\Resolver\WriterFilepathResolver;
+use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -16,28 +17,34 @@ abstract class AbstractStreamWriter extends AbstractWriter
      * @var resource
      */
     protected $stream;
-    protected string $filepath;
 
     protected WriterFilepathResolver $filepathResolver;
+    protected Filesystem $filesystem;
 
-    public function __construct(WriterFilepathResolver $filepathResolver)
+    public function __construct(Filesystem $filesystem, WriterFilepathResolver $filepathResolver)
     {
+        $this->filesystem = $filesystem;
         $this->filepathResolver = $filepathResolver;
     }
 
     public function prepare(array $options = [])
     {
-        $this->filepath = ($this->filepathResolver)($options['filepath']);
-        $this->stream = fopen($this->filepath, 'w');
+        $this->stream = tmpfile();
     }
 
     public function finish(array $options = []): WriterResults
     {
+        $streamMetadatas = stream_get_meta_data($this->stream);
+
+        $options = $this->resolveOptions($options);
+        $filepath = ($this->filepathResolver)($options['filepath']);
+        $this->filesystem->copy($streamMetadatas['uri'], $filepath);
+
         if (is_resource($this->stream)) {
             fclose($this->stream);
         }
 
-        return new WriterResults($this->getIdentifier(), ['filepath' => $this->filepath]);
+        return new WriterResults($this->getIdentifier(), ['filepath' => $filepath]);
     }
 
     protected function configureOptions(OptionsResolver $optionsResolver)

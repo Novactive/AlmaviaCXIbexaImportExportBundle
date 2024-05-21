@@ -41,17 +41,17 @@ class Job
     protected int $status = self::STATUS_PENDING;
 
     /**
-     * @ORM\Column(type="datetime")
+     * @ORM\Column(type="datetime_immutable")
      */
     private DateTimeImmutable $requestedDate;
 
     /**
-     * @ORM\Column(type="datetime", nullable=true)
+     * @ORM\Column(type="datetime_immutable", nullable=true)
      */
     protected ?DateTimeImmutable $startTime = null;
 
     /**
-     * @ORM\Column(type="datetime", nullable=true)
+     * @ORM\Column(type="datetime_immutable", nullable=true)
      */
     protected ?DateTimeImmutable $endTime = null;
 

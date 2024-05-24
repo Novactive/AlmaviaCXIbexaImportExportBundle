@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace AlmaviaCX\Bundle\IbexaImportExport\Reader\Ibexa\ContentList;
 
-use AlmaviaCX\Bundle\IbexaImportExport\Ibexa\ValueAccessorBuilder;
+use AlmaviaCX\Bundle\IbexaImportExport\Accessor\Ibexa\ValueAccessorBuilder;
 use AlmaviaCX\Bundle\IbexaImportExport\Reader\AbstractReader;
 use AlmaviaCX\Bundle\IbexaImportExport\Reader\Ibexa\ItemTransformer\ContentSearchHitTransformer;
 use AlmaviaCX\Bundle\IbexaImportExport\Reader\ItemTransformer\ItemTransformerIterator;

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace AlmaviaCX\Bundle\IbexaImportExport\Ibexa\Content\Field\ValueTransformer;
+namespace AlmaviaCX\Bundle\IbexaImportExport\Accessor\Ibexa\Content\Field\ValueTransformer;
 
 use Ibexa\Contracts\Core\Repository\Values\Content\Field;
 

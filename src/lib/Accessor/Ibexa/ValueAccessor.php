@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace AlmaviaCX\Bundle\IbexaImportExport\Ibexa;
+namespace AlmaviaCX\Bundle\IbexaImportExport\Accessor\Ibexa;
 
-use AlmaviaCX\Bundle\IbexaImportExport\Ibexa\Content\ContentAccessor;
+use AlmaviaCX\Bundle\IbexaImportExport\Accessor\Ibexa\Content\ContentAccessor;
 use Ibexa\Contracts\Core\Repository\Exceptions\PropertyNotFoundException;
 use Ibexa\Contracts\Core\Repository\Values\Content\Location;
 use Ibexa\Contracts\Core\Repository\Values\ContentType\ContentType;

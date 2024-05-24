@@ -1,13 +1,13 @@
 services:
     importexport.content.field.value.transformer.ezstring:
-        class: AlmaviaCX\Bundle\IbexaImportExport\Ibexa\Content\Field\ValueTransformer\GenericFieldValueTransformer
+        class: AlmaviaCX\Bundle\IbexaImportExport\Accessor\Ibexa\Content\Field\ValueTransformer\GenericFieldValueTransformer
         arguments:
             $propertyName: 'value.text'
         tags:
             - { name: 'importexport.content.field.value.transformer', type: 'ezstring' }
 
     importexport.content.field.value.transformer.ezrichtext:
-        class: AlmaviaCX\Bundle\IbexaImportExport\Ibexa\Content\Field\ValueTransformer\RichtextFieldValueTransformer
+        class: AlmaviaCX\Bundle\IbexaImportExport\Accessor\Ibexa\Content\Field\ValueTransformer\RichtextFieldValueTransformer
         arguments:
             $richTextOutputConverter: '@ibexa.richtext.converter.output.xhtml5'
         tags:

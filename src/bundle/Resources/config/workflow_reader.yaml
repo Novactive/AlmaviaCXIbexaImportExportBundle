@@ -2,7 +2,7 @@ services:
     AlmaviaCX\Bundle\IbexaImportExport\Reader\Ibexa\ContentList\IbexaContentListReader:
         arguments:
             $searchService: '@Ibexa\Contracts\Core\Repository\SearchService'
-            $valueAccessorBuilder: '@AlmaviaCX\Bundle\IbexaImportExport\Ibexa\ValueAccessorBuilder'
+            $valueAccessorBuilder: '@AlmaviaCX\Bundle\IbexaImportExport\Accessor\Ibexa\ValueAccessorBuilder'
         tags:
             - almaviacx.importexport.reader
 

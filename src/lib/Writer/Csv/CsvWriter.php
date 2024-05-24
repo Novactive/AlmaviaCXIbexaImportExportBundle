@@ -42,7 +42,12 @@ class CsvWriter extends AbstractStreamWriter
             }
         }
 
-        fputcsv($this->stream, $item, $options->getDelimiter(), $options->getEnclosure());
+        fputcsv(
+            $this->stream,
+            $item,
+            $options->getDelimiter(),
+            $options->getEnclosure()
+        );
     }
 
     public function getIdentifier(): string

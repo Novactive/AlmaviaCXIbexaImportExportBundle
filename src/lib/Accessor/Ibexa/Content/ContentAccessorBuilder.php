@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace AlmaviaCX\Bundle\IbexaImportExport\Ibexa\Content;
+namespace AlmaviaCX\Bundle\IbexaImportExport\Accessor\Ibexa\Content;
 
-use AlmaviaCX\Bundle\IbexaImportExport\Ibexa\Content\Field\ContentFieldAccessorBuilder;
+use AlmaviaCX\Bundle\IbexaImportExport\Accessor\Ibexa\Content\Field\ContentFieldAccessorBuilder;
 use Ibexa\Contracts\Core\Repository\Values\Content\Content;
 
 class ContentAccessorBuilder

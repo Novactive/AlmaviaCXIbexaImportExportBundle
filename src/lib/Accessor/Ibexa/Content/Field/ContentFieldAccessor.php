@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace AlmaviaCX\Bundle\IbexaImportExport\Ibexa\Content\Field;
+namespace AlmaviaCX\Bundle\IbexaImportExport\Accessor\Ibexa\Content\Field;
 
 use Symfony\Component\VarExporter\LazyGhostTrait;
 

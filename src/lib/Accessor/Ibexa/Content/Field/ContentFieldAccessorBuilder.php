@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace AlmaviaCX\Bundle\IbexaImportExport\Ibexa\Content\Field;
+namespace AlmaviaCX\Bundle\IbexaImportExport\Accessor\Ibexa\Content\Field;
 
-use AlmaviaCX\Bundle\IbexaImportExport\Ibexa\Content\Field\ValueTransformer\ContentFieldValueTransformerInterface;
+use AlmaviaCX\Bundle\IbexaImportExport\Accessor\Ibexa\Content\Field\ValueTransformer\ContentFieldValueTransformerInterface;
 use Ibexa\Contracts\Core\Repository\Values\Content\Field;
 
 class ContentFieldAccessorBuilder

@@ -24,15 +24,17 @@ abstract class AbstractStreamWriter extends AbstractWriter
 
     public function prepare()
     {
-        $this->stream = tmpfile();
+        $tmpName = tempnam(sys_get_temp_dir(), 'import_export_writer_');
+        $this->stream = fopen($tmpName, 'w+');
     }
 
     public function finish(): WriterResults
     {
         /** @var \AlmaviaCX\Bundle\IbexaImportExport\Writer\Stream\StreamWriterOptions $options */
         $options = $this->getOptions();
-
         $filepath = ($this->fileHandler)->resolvePath($options->getFilepath());
+
+        rewind($this->stream);
         $this->fileHandler->writeStream($filepath, $this->stream, new Config());
 
         if (is_resource($this->stream)) {

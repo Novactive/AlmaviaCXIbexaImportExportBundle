@@ -12,4 +12,5 @@ class ContentAccessor
 
     public array $fields;
     public string $name;
+    public object $creationDate;
 }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace AlmaviaCX\Bundle\IbexaImportExport\Accessor\Ibexa\Content;
 
+use AlmaviaCX\Bundle\IbexaImportExport\Accessor\DatetimeAccessor;
 use AlmaviaCX\Bundle\IbexaImportExport\Accessor\Ibexa\Content\Field\ContentFieldAccessorBuilder;
 use Ibexa\Contracts\Core\Repository\Values\Content\Content;
 
@@ -29,6 +30,9 @@ class ContentAccessorBuilder
             },
             'name' => function (ContentAccessor $instance) use ($content) {
                 return $content->getName();
+            },
+            'creationDate' => function (ContentAccessor $instance) use ($content) {
+                return new DatetimeAccessor($content->versionInfo->creationDate);
             },
         ];
 

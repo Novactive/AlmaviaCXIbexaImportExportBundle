@@ -54,3 +54,7 @@ services:
             $innerAdapter: '@ibexa.core.io.flysystem.adapter.site_access_aware'
             $prefixer: '@almaviacx.importexport.file_prefixer'
             $filepathResolver: '@AlmaviaCX\Bundle\IbexaImportExport\Resolver\FilepathResolver'
+
+    AlmaviaCX\Bundle\IbexaImportExport\AdminUi\Menu\Event\MenuListener:
+        tags:
+            - { name: kernel.event_subscriber }

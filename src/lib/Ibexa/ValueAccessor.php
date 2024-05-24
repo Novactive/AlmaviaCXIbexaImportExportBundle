@@ -10,6 +10,8 @@ use Ibexa\Contracts\Core\Repository\Values\Content\Location;
 use Ibexa\Contracts\Core\Repository\Values\ContentType\ContentType;
 use ReflectionClass;
 use ReflectionProperty;
+use Symfony\Component\PropertyAccess\Exception\NoSuchIndexException;
+use Symfony\Component\PropertyAccess\Exception\NoSuchPropertyException;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
 use Symfony\Component\PropertyAccess\PropertyPath;
@@ -36,7 +38,13 @@ class ValueAccessor
     {
         $propertyPath = new PropertyPath($propertyPath);
 
-        return $this->getPropertyAccessor()->getValue($this, $propertyPath);
+        try {
+            $value = $this->getPropertyAccessor()->getValue($this, $propertyPath);
+        } catch (NoSuchIndexException|NoSuchPropertyException  $exception) {
+            return null;
+        }
+
+        return $value;
     }
 
     public function getAvailableProperties(): array

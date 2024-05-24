@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace AlmaviaCX\Bundle\IbexaImportExport\Writer\Csv;
 
 use AlmaviaCX\Bundle\IbexaImportExport\Writer\Stream\AbstractStreamWriter;
+use InvalidArgumentException;
 use Symfony\Component\Translation\TranslatableMessage;
 
 class CsvWriter extends AbstractStreamWriter
@@ -24,6 +25,21 @@ class CsvWriter extends AbstractStreamWriter
         if ($options->isPrependHeaderRow() && 1 == $this->row++) {
             $headers = array_keys($item);
             fputcsv($this->stream, $headers, $options->getDelimiter(), $options->getEnclosure());
+        }
+
+        if (!is_array($item)) {
+            throw new InvalidArgumentException('[CsvWriter] provided item must be an array.');
+        }
+        foreach ($item as $valueIdentifier => $value) {
+            if (!is_scalar($value) && !is_null($value)) {
+                throw new InvalidArgumentException(
+                    sprintf(
+                        '[CsvWriter] provided value for "%s" must be scalar instead of %s.',
+                        $valueIdentifier,
+                        gettype($value)
+                    )
+                );
+            }
         }
 
         fputcsv($this->stream, $item, $options->getDelimiter(), $options->getEnclosure());

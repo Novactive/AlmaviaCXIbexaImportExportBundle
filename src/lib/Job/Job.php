@@ -71,9 +71,9 @@ class Job
     protected array $exceptions = [];
 
     /**
-     * @ORM\Column
+     * @ORM\Column(nullable=true)
      */
-    protected string $writerResults;
+    protected ?string $writerResults = null;
 
     public function getId(): int
     {

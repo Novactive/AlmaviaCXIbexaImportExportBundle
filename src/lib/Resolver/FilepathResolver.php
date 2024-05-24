@@ -7,7 +7,7 @@ namespace AlmaviaCX\Bundle\IbexaImportExport\Resolver;
 use DateTimeImmutable;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBag;
 
-class WriterFilepathResolver
+class FilepathResolver
 {
     protected ParameterBag $parameterBag;
 

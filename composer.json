@@ -19,7 +19,8 @@
   ],
   "require": {
     "php": "^7.3 || ^8.0",
-    "craue/formflow-bundle": "^3.0"
+    "craue/formflow-bundle": "^3.0",
+    "ramsey/uuid": "^3.9"
   },
   "autoload": {
     "psr-4": {

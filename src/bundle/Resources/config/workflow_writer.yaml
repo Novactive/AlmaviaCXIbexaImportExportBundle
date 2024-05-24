@@ -1,11 +1,12 @@
 services:
-    AlmaviaCX\Bundle\IbexaImportExport\Writer\WriterRegistry:
+    AlmaviaCX\Bundle\IbexaImportExport\Writer\Csv\CsvWriter:
         arguments:
-            $writers: !tagged_iterator almaviacx.importexport.writer
-
-    AlmaviaCX\Bundle\IbexaImportExport\Writer\CsvWriter:
-        arguments:
-            $filepathResolver: '@AlmaviaCX\Bundle\IbexaImportExport\Resolver\WriterFilepathResolver'
-            $filesystem: '@filesystem'
+            $fileHandler: '@AlmaviaCX\Bundle\IbexaImportExport\File\FileHandler'
         tags:
             - { name: almaviacx.importexport.writer }
+
+    AlmaviaCX\Bundle\IbexaImportExport\Writer\Stream\StreamWriterOptionsFormType:
+        arguments:
+            $filepathResolver: '@AlmaviaCX\Bundle\IbexaImportExport\Resolver\FilepathResolver'
+        tags:
+            - { name: form.type, alias: StreamWriterOptionsFormType }

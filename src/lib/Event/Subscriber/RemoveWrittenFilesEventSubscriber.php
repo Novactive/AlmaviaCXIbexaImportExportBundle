@@ -5,16 +5,17 @@ declare(strict_types=1);
 namespace AlmaviaCX\Bundle\IbexaImportExport\Event\Subscriber;
 
 use AlmaviaCX\Bundle\IbexaImportExport\Event\PreJobRunEvent;
+use AlmaviaCX\Bundle\IbexaImportExport\File\FileHandler;
+use AlmaviaCX\Bundle\IbexaImportExport\Writer\Csv\CsvWriter;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\Filesystem\Filesystem;
 
 class RemoveWrittenFilesEventSubscriber implements EventSubscriberInterface
 {
-    protected Filesystem $filesystem;
+    protected FileHandler $fileHandler;
 
-    public function __construct(Filesystem $filesystem)
+    public function __construct(FileHandler $fileHandler)
     {
-        $this->filesystem = $filesystem;
+        $this->fileHandler = $fileHandler;
     }
 
     public static function getSubscribedEvents()
@@ -29,8 +30,8 @@ class RemoveWrittenFilesEventSubscriber implements EventSubscriberInterface
         $results = $event->getJob()->getWriterResults();
 
         foreach ($results as $result) {
-            if (isset($result['filepath'])) {
-                $this->filesystem->remove($result['filepath']);
+            if (CsvWriter::class === $result->getType() && isset($result->getResults()['filepath'])) {
+                $this->fileHandler->delete($result->getResults()['filepath']);
             }
         }
     }

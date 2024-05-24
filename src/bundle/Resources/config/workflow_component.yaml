@@ -1,0 +1,9 @@
+imports:
+    - { resource: 'workflow_reader.yaml' }
+    - { resource: 'workflow_step.yaml' }
+    - { resource: 'workflow_writer.yaml' }
+
+services:
+    AlmaviaCX\Bundle\IbexaImportExport\Component\ComponentRegistry:
+        arguments:
+            $typeContainer: !abstract defined in AlmaviaCX\Bundle\IbexaImportExportBundle\DependencyInjection\CompilerPass\ComponentPass

@@ -1,10 +1,20 @@
 services:
-    AlmaviaCX\Bundle\IbexaImportExport\Reader\ReaderRegistry:
-        arguments:
-            $readers: !tagged_iterator almaviacx.importexport.reader
-
-    AlmaviaCX\Bundle\IbexaImportExport\Reader\IbexaContentListReader:
+    AlmaviaCX\Bundle\IbexaImportExport\Reader\Ibexa\ContentList\IbexaContentListReader:
         arguments:
             $searchService: '@Ibexa\Contracts\Core\Repository\SearchService'
+            $valueAccessorBuilder: '@AlmaviaCX\Bundle\IbexaImportExport\Ibexa\ValueAccessorBuilder'
         tags:
             - almaviacx.importexport.reader
+
+
+    AlmaviaCX\Bundle\IbexaImportExport\Reader\Csv\CsvReader:
+        tags:
+            - almaviacx.importexport.reader
+
+    AlmaviaCX\Bundle\IbexaImportExport\Reader\Csv\CsvReaderOptionsFormType:
+        tags:
+            - { name: form.type, alias: CsvReaderOptionsFormType }
+
+    AlmaviaCX\Bundle\IbexaImportExport\Reader\Ibexa\ContentList\IbexaContentListReaderOptionsFormType:
+        tags:
+            - { name: form.type, alias: IbexaContentListReaderOptionsFormType }

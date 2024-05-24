@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace AlmaviaCX\Bundle\IbexaImportExportBundle;
 
+use AlmaviaCX\Bundle\IbexaImportExportBundle\DependencyInjection\CompilerPass\ComponentPass;
+use AlmaviaCX\Bundle\IbexaImportExportBundle\DependencyInjection\CompilerPass\WorkflowPass;
 use AlmaviaCX\Bundle\IbexaImportExportBundle\DependencyInjection\Security\Provider\PolicyProvider;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
@@ -20,5 +22,8 @@ class AlmaviaCXIbexaImportExportBundle extends Bundle
         parent::build($container);
         $ibexaExtension = $container->getExtension('ibexa');
         $ibexaExtension->addPolicyProvider(new PolicyProvider());
+
+        $container->addCompilerPass(new ComponentPass());
+        $container->addCompilerPass(new WorkflowPass());
     }
 }

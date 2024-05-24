@@ -4,15 +4,21 @@ services:
             $entityManager: '@ibexa.doctrine.orm.entity_manager'
 
     AlmaviaCX\Bundle\IbexaImportExport\Workflow\WorkflowExecutor:
+        arguments:
+            $componentRegistry: '@AlmaviaCX\Bundle\IbexaImportExport\Component\ComponentRegistry'
+
     AlmaviaCX\Bundle\IbexaImportExport\Workflow\WorkflowRegistry:
         arguments:
-            $workflows: !tagged_iterator almaviacx.importexport.worflow
+            $typeContainer: !abstract defined in AlmaviaCX\Bundle\IbexaImportExportBundle\DependencyInjection\CompilerPass\WorkflowPass
+            $typesList: !abstract defined in AlmaviaCX\Bundle\IbexaImportExportBundle\DependencyInjection\CompilerPass\WorkflowPass
             $configurableWorkflowFactory: '@AlmaviaCX\Bundle\IbexaImportExport\Workflow\ConfigurableWorkflowFactory'
             $workflowConfigurationRepository: '@AlmaviaCX\Bundle\IbexaImportExport\Workflow\WorkflowConfigurationRepository'
 
 
     AlmaviaCX\Bundle\IbexaImportExport\Workflow\ConfigurableWorkflowFactory:
+
+    AlmaviaCX\Bundle\IbexaImportExport\Workflow\Form\Type\WorkflowProcessConfigurationFormType:
         arguments:
-            $writerRegistry: '@AlmaviaCX\Bundle\IbexaImportExport\Writer\WriterRegistry'
-            $readerRegistry: '@AlmaviaCX\Bundle\IbexaImportExport\Reader\ReaderRegistry'
-            $stepRegistry: '@AlmaviaCX\Bundle\IbexaImportExport\Step\StepRegistry'
+            $workflowRegistry: '@AlmaviaCX\Bundle\IbexaImportExport\Workflow\WorkflowRegistry'
+        tags:
+            - { name: form.type, alias: WorkflowProcessConfigurationFormType }

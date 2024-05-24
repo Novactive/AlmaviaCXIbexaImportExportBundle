@@ -4,11 +4,24 @@ declare(strict_types=1);
 
 namespace AlmaviaCX\Bundle\IbexaImportExport\Writer;
 
-class WriterResults extends \ArrayObject
+class WriterResults
 {
-    public function __construct(string $writerIdentifier, $array = [], $flags = 0, $iteratorClass = 'ArrayIterator')
+    protected string $type;
+    protected array $results;
+
+    public function __construct(string $type, array $results)
     {
-        $array['writerIdentifier'] = $writerIdentifier;
-        parent::__construct($array, $flags, $iteratorClass);
+        $this->type = $type;
+        $this->results = $results;
+    }
+
+    public function getType(): string
+    {
+        return $this->type;
+    }
+
+    public function getResults(): array
+    {
+        return $this->results;
     }
 }

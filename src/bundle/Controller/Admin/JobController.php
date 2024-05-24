@@ -4,24 +4,22 @@ declare(strict_types=1);
 
 namespace AlmaviaCX\Bundle\IbexaImportExportBundle\Controller\Admin;
 
+use AlmaviaCX\Bundle\IbexaImportExport\Event\PostJobCreateFormSubmitEvent;
 use AlmaviaCX\Bundle\IbexaImportExport\Job\Form\JobCreateFlow;
 use AlmaviaCX\Bundle\IbexaImportExport\Job\Job;
 use AlmaviaCX\Bundle\IbexaImportExport\Job\JobService;
-use AlmaviaCX\Bundle\IbexaImportExport\Writer\WriterRegistry;
 use Ibexa\Contracts\AdminUi\Controller\Controller;
 use Ibexa\Contracts\AdminUi\Notification\TranslatableNotificationHandlerInterface;
 use Ibexa\Contracts\Core\Repository\PermissionResolver;
-use Ibexa\Core\Base\Exceptions\NotFoundException;
 use Ibexa\Core\MVC\Symfony\Security\Authorization\Attribute;
 use Pagerfanta\Adapter\CallbackAdapter;
 use Pagerfanta\Pagerfanta;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\VarExporter\Instantiator;
-use Twig\Environment;
-use Twig\Error\LoaderError;
 
 class JobController extends Controller
 {
@@ -30,8 +28,7 @@ class JobController extends Controller
     protected JobService $jobService;
     protected JobCreateFlow $jobCreateFlow;
     protected PermissionResolver $permissionResolver;
-    protected Environment $twig;
-    protected WriterRegistry $writerRegistry;
+    protected EventDispatcherInterface $eventDispatcher;
 
     public function __construct(
         FormFactoryInterface $formFactory,
@@ -39,19 +36,17 @@ class JobController extends Controller
         JobService $jobService,
         JobCreateFlow $jobCreateFlow,
         PermissionResolver $permissionResolver,
-        Environment $twig,
-        WriterRegistry $writerRegistry
+        EventDispatcherInterface $eventDispatcher
     ) {
         $this->formFactory = $formFactory;
         $this->notificationHandler = $notificationHandler;
         $this->jobService = $jobService;
         $this->jobCreateFlow = $jobCreateFlow;
         $this->permissionResolver = $permissionResolver;
-        $this->twig = $twig;
-        $this->writerRegistry = $writerRegistry;
+        $this->eventDispatcher = $eventDispatcher;
     }
 
-    public function listAction(Request $request): Response
+    public function list(Request $request): Response
     {
         $page = $request->query->get('page') ?? 1;
 
@@ -75,7 +70,7 @@ class JobController extends Controller
         ]);
     }
 
-    public function createAction(Request $request): Response
+    public function create(Request $request): Response
     {
         $job = Instantiator::instantiate(Job::class);
         $this->jobCreateFlow->bind($job);
@@ -89,6 +84,8 @@ class JobController extends Controller
             } else {
                 $this->jobCreateFlow->reset();
                 try {
+                    $this->eventDispatcher->dispatch(new PostJobCreateFormSubmitEvent($job));
+
                     $job->setCreatorId($this->permissionResolver->getCurrentUserReference()->getUserId());
                     $this->jobService->createJob($job);
                     $this->notificationHandler->success(
@@ -116,37 +113,22 @@ class JobController extends Controller
         ]);
     }
 
-    public function viewAction(Job $job): Response
+    public function view(Job $job): Response
     {
-        $results = [];
-        foreach ($job->getWriterResults() as $index => $writerResults) {
-            try {
-                $writerIdentifier = $writerResults['writerIdentifier'];
-                $writer = $this->writerRegistry->get($writerIdentifier);
-                $template = sprintf('@ibexadesign/import_export/writer/results/%s.html.twig', $writerIdentifier);
-                $this->twig->load($template);
-
-                $results[] = [
-                    'template' => $template,
-                    'parameters' => [
-                        'results' => $writerResults,
-                        'writerIndex' => $index,
-                        'writer' => $writer,
-                        'job' => $job,
-                    ],
-                ];
-            } catch (LoaderError|NotFoundException $e) {
-                continue;
-            }
-        }
-
         return $this->render('@ibexadesign/import_export/job/view.html.twig', [
             'job' => $job,
-            'results' => $results,
         ]);
     }
 
-    public function processAction(Job $job): Response
+    public function displayLogs(Job $job)
+    {
+        return $this->render('@ibexadesign/import_export/job/logs.html.twig', [
+            'job' => $job,
+            'logs' => $job->getExceptions(),
+        ]);
+    }
+
+    public function process(Job $job): Response
     {
         $this->jobService->runJob($job);
 

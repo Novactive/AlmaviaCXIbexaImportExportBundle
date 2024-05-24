@@ -79,11 +79,10 @@
             headline_items: information_headline_items,
             items: information_items,
         } only %}
-
-        {% for result in results %}
-            {% include result.template with result.parameters only %}
-        {% endfor %}
     </div>
+
+    {{ render(controller('AlmaviaCX\\Bundle\\IbexaImportExportBundle\\Controller\\Admin\\WriterController::displayResults', {job: job})) }}
+    {{ render(controller('AlmaviaCX\\Bundle\\IbexaImportExportBundle\\Controller\\Admin\\JobController::displayLogs', {job: job})) }}
 {% endblock %}
 
 {% block javascripts %}

@@ -4,7 +4,10 @@ declare(strict_types=1);
 
 namespace AlmaviaCX\Bundle\IbexaImportExport\Workflow;
 
+use AlmaviaCX\Bundle\IbexaImportExport\Processor\ProcessorOptions;
+use AlmaviaCX\Bundle\IbexaImportExport\Reader\ReaderOptions;
 use Doctrine\ORM\Mapping as ORM;
+use InvalidArgumentException;
 
 /**
  * @ORM\Entity()
@@ -24,15 +27,15 @@ class WorkflowConfiguration
     protected string $name;
 
     /**
-     * @ORM\Column(type="array")
+     * @ORM\Column
      */
-    protected array $configuration;
+    protected WorkflowProcessConfiguration $processConfiguration;
 
-    public function __construct(string $identifier, string $name, array $configuration)
+    public function __construct(string $identifier, string $name)
     {
         $this->identifier = $identifier;
         $this->name = $name;
-        $this->configuration = $configuration;
+        $this->processConfiguration = new WorkflowProcessConfiguration();
     }
 
     public function getIdentifier(): string
@@ -55,18 +58,59 @@ class WorkflowConfiguration
         $this->name = $name;
     }
 
-    public function getConfiguration(): array
+    public function getProcessConfiguration(): WorkflowProcessConfiguration
     {
-        return $this->configuration;
+        return $this->processConfiguration;
     }
 
-    public function setConfiguration(array $configuration): void
+    public function setProcessConfiguration(WorkflowProcessConfiguration $processConfiguration): void
     {
-        $this->configuration = $configuration;
+        $this->processConfiguration = $processConfiguration;
     }
 
-    public function getReaderIdentifier(): string
+    public function setReader(string $class, ReaderOptions $options = null)
     {
-        return $this->configuration['reader']['identifier'];
+        $requiredOptionsType = call_user_func([$class, 'getOptionsType']);
+        if (!$options) {
+            $options = new $requiredOptionsType();
+        }
+        if (!$options instanceof $requiredOptionsType) {
+            throw new InvalidArgumentException('Options must be an instance of '.$requiredOptionsType);
+        }
+        $this->processConfiguration->setReader([
+                                                    'type' => $class,
+                                                    'options' => $options,
+                                                ]);
+    }
+
+    public function addProcessor(string $class, ProcessorOptions $options = null)
+    {
+        $requiredOptionsType = call_user_func([$class, 'getOptionsType']);
+        if (!$options) {
+            $options = new $requiredOptionsType();
+        }
+        if (!$options instanceof $requiredOptionsType) {
+            throw new InvalidArgumentException('Options must be an instance of '.$requiredOptionsType);
+        }
+        $this->processConfiguration->addProcessor([
+                                                       'type' => $class,
+                                                       'options' => $options,
+                                                   ]);
+    }
+
+    /**
+     * @return array{type: string, options: ReaderOptions}
+     */
+    public function getReader(): array
+    {
+        return $this->processConfiguration->getReader();
+    }
+
+    /**
+     * @return array<array{type: string, options: ProcessorOptions}>
+     */
+    public function getProcessors(): array
+    {
+        return $this->processConfiguration->getProcessors();
     }
 }

@@ -14,11 +14,11 @@ services:
             $workflowRegistry: '@AlmaviaCX\Bundle\IbexaImportExport\Workflow\WorkflowRegistry'
             $eventDispatcher: '@Symfony\Contracts\EventDispatcher\EventDispatcherInterface'
 
-    AlmaviaCX\Bundle\IbexaImportExport\Job\Form\Type\JobCreateType:
+    AlmaviaCX\Bundle\IbexaImportExport\Job\Form\Type\JobFormType:
         arguments:
             $workflowRegistry: '@AlmaviaCX\Bundle\IbexaImportExport\Workflow\WorkflowRegistry'
         tags:
-            - { name: form.type, alias: AlmaviaCX\Bundle\IbexaImportExport\Job\Form\Type\JobCreateType }
+            - { name: form.type, alias: JobType }
 
     AlmaviaCX\Bundle\IbexaImportExport\Job\Form\JobCreateFlow:
         parent: craue.form.flow

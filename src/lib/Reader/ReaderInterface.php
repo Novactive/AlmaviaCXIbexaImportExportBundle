@@ -4,18 +4,10 @@ declare(strict_types=1);
 
 namespace AlmaviaCX\Bundle\IbexaImportExport\Reader;
 
+use AlmaviaCX\Bundle\IbexaImportExport\Component\ComponentInterface;
 use Iterator;
-use Symfony\Component\Form\FormBuilderInterface;
 
-interface ReaderInterface
+interface ReaderInterface extends ComponentInterface
 {
-    public function getIdentifier(): string;
-
-    public function getName(): string;
-
-    public function __invoke(array $options): Iterator;
-
-    public function mapConfigurationForm(FormBuilderInterface $formBuilder): void;
-
-    public function mapJobForm(FormBuilderInterface $formBuilder): void;
+    public function __invoke(): Iterator;
 }

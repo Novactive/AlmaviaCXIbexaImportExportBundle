@@ -1,20 +1,20 @@
 # JOB
 import_export.job.create:
     path:     /importexport/job/create
-    defaults: { _controller: AlmaviaCX\Bundle\IbexaImportExportBundle\Controller\Admin\JobController::createAction }
+    defaults: { _controller: AlmaviaCX\Bundle\IbexaImportExportBundle\Controller\Admin\JobController::create }
 
 import_export.job.list:
     path:     /importexport/job/list
-    defaults: { _controller: AlmaviaCX\Bundle\IbexaImportExportBundle\Controller\Admin\JobController::listAction }
+    defaults: { _controller: AlmaviaCX\Bundle\IbexaImportExportBundle\Controller\Admin\JobController::list }
 
 import_export.job.view:
     path:     /importexport/job/{id}/view
-    defaults: { _controller: AlmaviaCX\Bundle\IbexaImportExportBundle\Controller\Admin\JobController::viewAction }
+    defaults: { _controller: AlmaviaCX\Bundle\IbexaImportExportBundle\Controller\Admin\JobController::view }
 
 import_export.job.run:
     path:     /importexport/job/{id}/run
-    defaults: { _controller: AlmaviaCX\Bundle\IbexaImportExportBundle\Controller\Admin\JobController::processAction }
+    defaults: { _controller: AlmaviaCX\Bundle\IbexaImportExportBundle\Controller\Admin\JobController::process }
 
 import_export.writer.download_file:
     path:     /importexport/writer/{id}/{writerIndex}/download
-    defaults: { _controller: AlmaviaCX\Bundle\IbexaImportExportBundle\Controller\Admin\WriterController::downloadFileAction }
+    defaults: { _controller: AlmaviaCX\Bundle\IbexaImportExportBundle\Controller\Admin\WriterController::downloadFile }

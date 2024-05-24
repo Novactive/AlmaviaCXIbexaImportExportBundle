@@ -5,15 +5,14 @@ declare(strict_types=1);
 namespace AlmaviaCX\Bundle\IbexaImportExport\Workflow;
 
 use AlmaviaCX\Bundle\IbexaImportExport\Result\Result;
-use Symfony\Component\Form\FormBuilderInterface;
 
 interface WorkflowInterface
 {
-    public function getIdentifier(): string;
+    public function __invoke(): Result;
 
-    public function getName(): string;
+    public function setConfiguration(WorkflowRunConfiguration $configuration): void;
 
-    public function __invoke(array $options): Result;
+    public static function getDefaultConfig(): WorkflowConfiguration;
 
-    public function mapJobForm(FormBuilderInterface $formBuilder): void;
+    public static function getConfigurationFormType(): ?string;
 }

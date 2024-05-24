@@ -6,12 +6,16 @@ services:
             $notificationHandler: '@Ibexa\AdminUi\Notification\TranslatableNotificationHandler'
             $jobCreateFlow: '@AlmaviaCX\Bundle\IbexaImportExport\Job\Form\JobCreateFlow'
             $jobService: '@AlmaviaCX\Bundle\IbexaImportExport\Job\JobService'
-            $twig: '@twig'
+            $eventDispatcher: '@event_dispatcher'
         tags:
             - controller.service_arguments
 
     AlmaviaCX\Bundle\IbexaImportExportBundle\Controller\Admin\WriterController:
         autowire: true
+        arguments:
+            $twig: '@twig'
+            $componentRegistry: '@AlmaviaCX\Bundle\IbexaImportExport\Component\ComponentRegistry'
+            $filesystem: '@filesystem'
         tags:
             - controller.service_arguments
 
@@ -24,12 +28,29 @@ services:
         tags:
             - { name: knp_menu.menu_builder, method: build, alias: almaviacx.import_export.menu.job_create.sidebar_right }
 
-    AlmaviaCX\Bundle\IbexaImportExport\Resolver\WriterFilepathResolver:
+    AlmaviaCX\Bundle\IbexaImportExport\Resolver\FilepathResolver:
         arguments:
             $parameterBag: '@parameter_bag'
 
     AlmaviaCX\Bundle\IbexaImportExport\Event\Subscriber\RemoveWrittenFilesEventSubscriber:
         arguments:
-            $filesystem: '@filesystem'
+            $fileHandler: '@AlmaviaCX\Bundle\IbexaImportExport\File\FileHandler'
         tags:
             - kernel.event_subscriber
+
+    AlmaviaCX\Bundle\IbexaImportExport\Event\Subscriber\PostJobCreateFormSubmitEventSubscriber:
+        arguments:
+            $fileHandler: '@AlmaviaCX\Bundle\IbexaImportExport\File\FileHandler'
+        tags:
+            - kernel.event_subscriber
+
+    almaviacx.importexport.file_prefixer:
+        class: League\Flysystem\PathPrefixer
+        arguments:
+            $prefix: 'import_export'
+
+    AlmaviaCX\Bundle\IbexaImportExport\File\FileHandler:
+        arguments:
+            $innerAdapter: '@ibexa.core.io.flysystem.adapter.site_access_aware'
+            $prefixer: '@almaviacx.importexport.file_prefixer'
+            $filepathResolver: '@AlmaviaCX\Bundle\IbexaImportExport\Resolver\FilepathResolver'

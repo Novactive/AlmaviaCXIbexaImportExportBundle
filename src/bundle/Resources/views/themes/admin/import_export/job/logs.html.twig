@@ -1,0 +1,19 @@
+<div class="ibexa-container">
+    <div class="ibexa-details">
+        <div class="ibexa-details__header ">
+            {% include '@ibexadesign/ui/component/table/table_header.html.twig' with {
+                headline: 'job.logs'|trans()|desc('Logs'),
+                actions: []
+            } %}
+        </div>
+        <div class="ibexa-details__items ibexa-details__items--vertical">
+            {% for log in logs %}
+                <div class="ibexa-details__item">
+                    <div class="ibexa-details__item-content">
+                        {{ log|nl2br }}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>

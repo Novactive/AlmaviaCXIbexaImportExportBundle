@@ -4,21 +4,11 @@ declare(strict_types=1);
 
 namespace AlmaviaCX\Bundle\IbexaImportExport\Writer;
 
-use Symfony\Component\Form\FormBuilderInterface;
+use AlmaviaCX\Bundle\IbexaImportExport\Processor\ProcessorInterface;
 
-interface WriterInterface
+interface WriterInterface extends ProcessorInterface
 {
-    public function getIdentifier(): string;
+    public function prepare();
 
-    public function getName(): string;
-
-    public function prepare(array $options = []);
-
-    public function __invoke(array $item, array $options = []): void;
-
-    public function finish(array $options = []): WriterResults;
-
-    public function mapConfigurationForm(FormBuilderInterface $formBuilder): void;
-
-    public function mapJobForm(FormBuilderInterface $formBuilder): void;
+    public function finish(): WriterResults;
 }

@@ -21,9 +21,7 @@ class AlmaviaCXIbexaImportExportExtension extends Extension implements PrependEx
         $loader->load('services.yml');
         $loader->load('job.yaml');
         $loader->load('workflow.yaml');
-        $loader->load('workflow_reader.yaml');
-        $loader->load('workflow_step.yaml');
-        $loader->load('workflow_writer.yaml');
+        $loader->load('workflow_component.yaml');
         $loader->load('object_accessor.yaml');
         $loader->load('content_field_value_transformer.yaml');
     }

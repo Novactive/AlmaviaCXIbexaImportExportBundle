@@ -49,4 +49,12 @@ class ConfigurableWorkflow extends AbstractWorkflow
     {
         return $this->steps;
     }
+
+    public static function getDefaultConfig(): WorkflowConfiguration
+    {
+        return new WorkflowConfiguration(
+            'configurable',
+            'Configurable workflow',
+        );
+    }
 }

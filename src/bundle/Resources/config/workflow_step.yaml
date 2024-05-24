@@ -1,10 +1,1 @@
 services:
-    AlmaviaCX\Bundle\IbexaImportExport\Step\StepRegistry:
-        arguments:
-            $steps: !tagged_iterator almaviacx.importexport.step
-
-    AlmaviaCX\Bundle\IbexaImportExport\Step\IbexaContentToArrayStep:
-        arguments:
-            $valueAccessorBuilder: '@AlmaviaCX\Bundle\IbexaImportExport\Ibexa\ValueAccessorBuilder'
-        tags:
-            - almaviacx.importexport.step

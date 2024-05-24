@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace AlmaviaCX\Bundle\IbexaImportExport\Job;
 
+use AlmaviaCX\Bundle\IbexaImportExport\Event\PostJobRunEvent;
 use AlmaviaCX\Bundle\IbexaImportExport\Event\PreJobRunEvent;
 use AlmaviaCX\Bundle\IbexaImportExport\Result\Result;
 use AlmaviaCX\Bundle\IbexaImportExport\Workflow\WorkflowExecutor;
@@ -28,12 +29,17 @@ class JobRunner
 
     public function __invoke(Job $job): Result
     {
-        $workflow = $this->workflowRegistry->get($job->getWorkflowIdentifier());
+        $workflow = $this->workflowRegistry->getWorkflow($job->getWorkflowIdentifier());
+        $configuration = $job->getOptions();
+
         $this->eventDispatcher->dispatch(new PreJobRunEvent($job, $workflow));
 
-        $results = ($this->workflowExecutor)($workflow, $job->getOptions());
+        $results = ($this->workflowExecutor)(
+            $workflow,
+            $configuration
+        );
 
-        $this->eventDispatcher->dispatch(new PreJobRunEvent($job, $workflow, $results));
+        $this->eventDispatcher->dispatch(new PostJobRunEvent($job, $workflow, $results));
 
         return $results;
     }

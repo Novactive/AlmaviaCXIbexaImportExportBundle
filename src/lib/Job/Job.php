@@ -63,7 +63,7 @@ class Job
     /**
      * @ORM\Column
      */
-    protected array $options = [];
+    protected array $options;
 
     /**
      * @ORM\Column
@@ -73,7 +73,7 @@ class Job
     /**
      * @ORM\Column
      */
-    protected array $writerResults = [];
+    protected string $writerResults;
 
     public function getId(): int
     {
@@ -170,13 +170,16 @@ class Job
         $this->exceptions = $exceptions;
     }
 
+    /**
+     * @return \AlmaviaCX\Bundle\IbexaImportExport\Writer\WriterResults[]
+     */
     public function getWriterResults(): array
     {
-        return $this->writerResults;
+        return $this->writerResults ? unserialize($this->writerResults) : [];
     }
 
     public function setWriterResults(array $writerResults): void
     {
-        $this->writerResults = $writerResults;
+        $this->writerResults = serialize($writerResults);
     }
 }

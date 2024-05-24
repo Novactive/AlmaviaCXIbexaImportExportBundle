@@ -11,7 +11,7 @@ A `workflow` call a `reader` to get a list of items, then use a list of `step` t
 
 Workflow can be created throught the admin UI or as a Symfony service.
 
-The workflow service must implement `AlmaviaCX\Bundle\IbexaImportExport\Workflow\WorkflowInterface` and have the tag `almaviacx.importexport.worflow`
+The workflow service must implement `AlmaviaCX\Bundle\IbexaImportExport\Workflow\WorkflowInterface` and have the tag `almaviacx.importexport.workflow`
 
 The bundle provide the `AlmaviaCX\Bundle\IbexaImportExport\Workflow\AbstractWorkflow` to simplify the creation of a service
 

@@ -5,25 +5,36 @@ declare(strict_types=1);
 namespace AlmaviaCX\Bundle\IbexaImportExportBundle\Controller\Admin;
 
 use AlmaviaCX\Bundle\IbexaImportExport\Component\ComponentRegistry;
+use AlmaviaCX\Bundle\IbexaImportExport\File\FileHandler;
 use AlmaviaCX\Bundle\IbexaImportExport\Job\Job;
+use App\Helper\TranslationExportHelper;
 use Ibexa\Contracts\AdminUi\Controller\Controller;
 use Ibexa\Core\Base\Exceptions\NotFoundException;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\Response;
 use Twig\Environment;
 use Twig\Error\LoaderError;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
+
 
 class WriterController extends Controller
 {
     protected Filesystem $filesystem;
     protected Environment $twig;
     protected ComponentRegistry $componentRegistry;
+    protected FileHandler $fileHandler;
 
-    public function __construct(Filesystem $filesystem, Environment $twig, ComponentRegistry $componentRegistry)
+    public function __construct(
+        Filesystem $filesystem,
+        Environment $twig,
+        ComponentRegistry $componentRegistry,
+        FileHandler $fileHandler
+    )
     {
         $this->filesystem = $filesystem;
         $this->twig = $twig;
         $this->componentRegistry = $componentRegistry;
+        $this->fileHandler = $fileHandler;
     }
 
     public function displayResults(Job $job): Response
@@ -59,15 +70,24 @@ class WriterController extends Controller
         ]);
     }
 
-    public function downloadFile(Job $job, $writerIndex)
+    public function downloadFile(Job $job)
     {
-//        $writer = $this->writerRegistry->get($job->getWriterResults()[$writerIndex]['writerIdentifier']);
-//        if (!$writer instanceof AbstractStreamWriter) {
-//            exit();
-//        }
+        try {
+            $results = $job->getWriterResults();
+            $filePath = reset($results)->getResults()['filepath'] ?? null;
 
-//        $filepath = $job->getWriterResults()[$writerIndex]['filePath'];
+            if ($this->fileHandler->fileExists($filePath)) {
+                $fileAttr = $this->fileHandler->fileSize($filePath);
+                $fileFullPath = $fileAttr->path();
+                $headers = [
+                    'Content-Type' => 'application/octet-stream',
+                    'Content-Disposition' => 'attachment; filename=' . basename($fileFullPath),
+                ];
 
-        return new Response('');
+                return new BinaryFileResponse($fileFullPath, Response::HTTP_OK, $headers);
+            }
+        } catch (Exception $e) {
+            throw $e;
+        }
     }
 }

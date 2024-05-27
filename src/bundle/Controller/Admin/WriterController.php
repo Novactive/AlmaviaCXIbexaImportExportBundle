@@ -5,7 +5,10 @@ declare(strict_types=1);
 namespace AlmaviaCX\Bundle\IbexaImportExportBundle\Controller\Admin;
 
 use AlmaviaCX\Bundle\IbexaImportExport\Component\ComponentRegistry;
+use AlmaviaCX\Bundle\IbexaImportExport\File\DownloadFileResponse;
+use AlmaviaCX\Bundle\IbexaImportExport\File\FileHandler;
 use AlmaviaCX\Bundle\IbexaImportExport\Job\Job;
+use AlmaviaCX\Bundle\IbexaImportExport\Writer\Stream\AbstractStreamWriter;
 use Ibexa\Contracts\AdminUi\Controller\Controller;
 use Ibexa\Core\Base\Exceptions\NotFoundException;
 use Symfony\Component\Filesystem\Filesystem;
@@ -15,16 +18,22 @@ use Twig\Error\LoaderError;
 
 class WriterController extends Controller
 {
-    protected Filesystem $filesystem;
     protected Environment $twig;
     protected ComponentRegistry $componentRegistry;
+    protected FileHandler $fileHandler;
 
-    public function __construct(Filesystem $filesystem, Environment $twig, ComponentRegistry $componentRegistry)
+    /**
+     * @param \Twig\Environment                                               $twig
+     * @param \AlmaviaCX\Bundle\IbexaImportExport\Component\ComponentRegistry $componentRegistry
+     * @param \AlmaviaCX\Bundle\IbexaImportExport\File\FileHandler            $fileHandler
+     */
+    public function __construct( Environment $twig, ComponentRegistry $componentRegistry, FileHandler $fileHandler )
     {
-        $this->filesystem = $filesystem;
         $this->twig = $twig;
         $this->componentRegistry = $componentRegistry;
+        $this->fileHandler = $fileHandler;
     }
+
 
     public function displayResults(Job $job): Response
     {
@@ -61,13 +70,12 @@ class WriterController extends Controller
 
     public function downloadFile(Job $job, $writerIndex)
     {
-//        $writer = $this->writerRegistry->get($job->getWriterResults()[$writerIndex]['writerIdentifier']);
-//        if (!$writer instanceof AbstractStreamWriter) {
-//            exit();
-//        }
+        $writerResults = $job->getWriterResults()[$writerIndex];
+        $writer = $this->componentRegistry->getComponent($writerResults->getType());
+        if (!$writer instanceof AbstractStreamWriter) {
+            exit();
+        }
 
-//        $filepath = $job->getWriterResults()[$writerIndex]['filePath'];
-
-        return new Response('');
+        return new DownloadFileResponse($writerResults->getResults()['filepath'], $this->fileHandler);
     }
 }

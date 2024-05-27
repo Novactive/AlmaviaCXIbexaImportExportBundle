@@ -15,7 +15,7 @@ services:
         arguments:
             $twig: '@twig'
             $componentRegistry: '@AlmaviaCX\Bundle\IbexaImportExport\Component\ComponentRegistry'
-            $filesystem: '@filesystem'
+            $fileHandler: '@AlmaviaCX\Bundle\IbexaImportExport\File\FileHandler'
         tags:
             - controller.service_arguments
 

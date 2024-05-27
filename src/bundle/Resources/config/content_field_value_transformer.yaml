@@ -12,3 +12,8 @@ services:
             $richTextOutputConverter: '@ibexa.richtext.converter.output.xhtml5'
         tags:
             - { name: 'importexport.content.field.value.transformer', type: 'ezrichtext' }
+
+    importexport.content.field.value.transformer.ibexa_taxonomy_entry_assignment:
+        class: AlmaviaCX\Bundle\IbexaImportExport\Accessor\Ibexa\Content\Field\ValueTransformer\TaxonomyFieldValueTransformer
+        tags:
+            - { name: 'importexport.content.field.value.transformer', type: 'ibexa_taxonomy_entry_assignment' }

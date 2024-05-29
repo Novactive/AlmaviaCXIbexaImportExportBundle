@@ -12,3 +12,13 @@ services:
             $richTextOutputConverter: '@ibexa.richtext.converter.output.xhtml5'
         tags:
             - { name: 'importexport.content.field.value.transformer', type: 'ezrichtext' }
+
+    importexport.content.field.value.transformer.ezdate:
+        class: AlmaviaCX\Bundle\IbexaImportExport\Accessor\Ibexa\Content\Field\ValueTransformer\DateFieldValueTransformer
+        tags:
+            - { name: 'importexport.content.field.value.transformer', type: 'ezdate' }
+
+    importexport.content.field.value.transformer.ezdatetime:
+        class: AlmaviaCX\Bundle\IbexaImportExport\Accessor\Ibexa\Content\Field\ValueTransformer\DateTimeFieldValueTransformer
+        tags:
+            - { name: 'importexport.content.field.value.transformer', type: 'ezdatetime' }

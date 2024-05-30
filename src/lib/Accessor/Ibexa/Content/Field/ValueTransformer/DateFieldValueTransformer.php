@@ -12,8 +12,6 @@ class DateFieldValueTransformer implements ContentFieldValueTransformerInterface
 
     public function __invoke(Field $field)
     {
-        $dateTimeAccessor = new DatetimeAccessor($field->getValue()->date);
-
-        return $dateTimeAccessor->YMD;
+        return new DatetimeAccessor($field->getValue()->date);
     }
 }

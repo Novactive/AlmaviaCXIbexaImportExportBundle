@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace AlmaviaCX\Bundle\IbexaImportExport\Accessor\Ibexa\Content\Field\ValueTransformer;
 
 use Ibexa\Contracts\Core\Repository\Values\Content\Field;
+use Ibexa\Contracts\Core\Repository\Values\ContentType\FieldDefinition;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 
 class GenericFieldValueTransformer implements ContentFieldValueTransformerInterface
@@ -17,7 +18,7 @@ class GenericFieldValueTransformer implements ContentFieldValueTransformerInterf
         $this->propertyName = $propertyName;
     }
 
-    public function __invoke(Field $field)
+    public function __invoke(Field $field, FieldDefinition $fieldDefinition)
     {
         $accessor = PropertyAccess::createPropertyAccessor();
 

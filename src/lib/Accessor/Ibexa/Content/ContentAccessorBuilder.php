@@ -23,7 +23,8 @@ class ContentAccessorBuilder
             'fields' => function (ContentAccessor $instance) use ($content) {
                 $fields = [];
                 foreach ($content->getFields() as $field) {
-                    $fields[$field->fieldDefIdentifier] = $this->contentFieldAccessorBuilder->build($field);
+                    $fieldDefinition = $content->getContentType()->getFieldDefinition($field->fieldDefIdentifier);
+                    $fields[$field->fieldDefIdentifier] = $this->contentFieldAccessorBuilder->build($field, $fieldDefinition);
                 }
 
                 return $fields;

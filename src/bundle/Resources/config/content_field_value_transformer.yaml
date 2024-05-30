@@ -27,3 +27,8 @@ services:
         class: AlmaviaCX\Bundle\IbexaImportExport\Accessor\Ibexa\Content\Field\ValueTransformer\TaxonomyFieldValueTransformer
         tags:
             - { name: 'importexport.content.field.value.transformer', type: 'ibexa_taxonomy_entry_assignment' }
+
+    importexport.content.field.value.transformer.ezselection:
+        class: AlmaviaCX\Bundle\IbexaImportExport\Accessor\Ibexa\Content\Field\ValueTransformer\SelectionFieldValueTransformer
+        tags:
+            - { name: 'importexport.content.field.value.transformer', type: 'ezselection' }

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace AlmaviaCX\Bundle\IbexaImportExport\Accessor\Ibexa\Content\Field\ValueTransformer;
 
 use Ibexa\Contracts\Core\Repository\Values\Content\Field;
+use Ibexa\Contracts\Core\Repository\Values\ContentType\FieldDefinition;
 use Ibexa\Contracts\FieldTypeRichText\RichText\Converter as RichTextConverterInterface;
 
 class RichtextFieldValueTransformer implements ContentFieldValueTransformerInterface
@@ -17,7 +18,7 @@ class RichtextFieldValueTransformer implements ContentFieldValueTransformerInter
         $this->richTextOutputConverter = $richTextOutputConverter;
     }
 
-    public function __invoke(Field $field)
+    public function __invoke(Field $field, FieldDefinition $fieldDefinition)
     {
         /** @var \Ibexa\FieldTypeRichText\FieldType\RichText\Value $fieldValue */
         $fieldValue = $field->value;

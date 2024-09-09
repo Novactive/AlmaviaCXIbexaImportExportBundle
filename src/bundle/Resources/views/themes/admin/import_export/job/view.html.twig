@@ -66,6 +66,14 @@
             label: 'job.property.progress'|trans()|desc('Progress'),
             content_raw: progress_bar,
         },
+        {
+            label: 'job.property.workflowIdentifier'|trans()|desc('workflowIdentifier'),
+            content_raw: job.workflowIdentifier,
+        },
+        {
+            label: 'job.property.file'|trans()|desc('File'),
+            content_raw: '<a href="' ~ file|default ~ '" target="_blanc">' ~ file|default ~ '</a>',
+        },
     ] %}
 
     {% set information_headline_items %}

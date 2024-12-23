@@ -8,6 +8,7 @@ use AlmaviaCX\Bundle\IbexaImportExport\Event\PostJobCreateFormSubmitEvent;
 use AlmaviaCX\Bundle\IbexaImportExport\Job\Form\JobCreateFlow;
 use AlmaviaCX\Bundle\IbexaImportExport\Job\Job;
 use AlmaviaCX\Bundle\IbexaImportExport\Job\JobService;
+use AlmaviaCX\Bundle\IbexaImportExport\Reader\File\FileReaderOptions;
 use Exception;
 use Ibexa\Contracts\AdminUi\Controller\Controller;
 use Ibexa\Contracts\AdminUi\Notification\TranslatableNotificationHandlerInterface;
@@ -123,8 +124,15 @@ class JobController extends Controller implements TranslationContainerInterface
 
     public function view(Job $job): Response
     {
+        $reader = $job->getOptions()['reader'] ?? null;
+        $file = null;
+        if ($reader instanceof FileReaderOptions) {
+            $file = '/var/site/storage/import_export/' . $reader->file;
+        }
+
         return $this->render('@ibexadesign/import_export/job/view.html.twig', [
             'job' => $job,
+            'file' => $file,
         ]);
     }
 

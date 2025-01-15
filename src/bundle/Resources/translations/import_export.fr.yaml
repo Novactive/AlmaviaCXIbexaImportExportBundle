@@ -1,9 +1,21 @@
 Notice: Notice
+execution.view.log.item_index: Item
+execution.view.log.message: Message
+execution.view.log.type: Type
 job.breadcrumb.list: Tâches
 job.cancel: Annuler
 job.pause: Mettre en pause
 job.create.success: 'Tâche ''%label%'' créée.'
 job.creating: Création
+job.execution.cancel: Cancel
+job.execution.property.endTime: 'End time'
+job.execution.property.end_time: 'End time'
+job.execution.property.id: Id
+job.execution.property.progress: Progress
+job.execution.property.startTime: 'Start time'
+job.execution.property.start_time: 'Start time'
+job.execution.property.status: Status
+job.executions.headline: 'Executions (%count%)'
 job.list.action.create: Créer
 job.list.title: Tâches
 job.new.title: 'Créer une nouvelle Tâche'
@@ -29,12 +41,16 @@ job.view.logs.title: Logs
 job.view.title: 'Tâche: %label%'
 notification.job.done: 'Job %job_label% (%job_id%) is done running.'
 reader.csv.name: 'Lecteur de fichier CSV'
+reader.file.name: 'File input'
 reader.ibexa.content_list.name: 'Liste de contenu'
+reader.mdb.name: 'Microsoft Access Database reader'
+reader.salesforce.soql.name: 'Salesforce SOQL'
 reader.xls.name: 'Lecteur de fichier Excel'
 reader.xml.name: 'Lecteur de fichier XML'
 step.callback.name: Callback
 step.filter.not_empty.name: 'Filtre non vide'
 step.filter.unique.name: 'Filtre Unique'
+tab.details.execution_details: 'Execution details'
 tab.details.technical_details: 'Information techniques'
 writer.csv.generated_file.download: 'Télécharger le fichier'
 writer.csv.generated_file.title: 'Fichier généré'

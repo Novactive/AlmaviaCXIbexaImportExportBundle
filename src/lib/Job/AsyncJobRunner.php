@@ -4,34 +4,29 @@ declare(strict_types=1);
 
 namespace AlmaviaCX\Bundle\IbexaImportExport\Job;
 
+use AlmaviaCX\Bundle\IbexaImportExport\Execution\Execution;
+use AlmaviaCX\Bundle\IbexaImportExport\Execution\ExecutionRepository;
 use AlmaviaCX\Bundle\IbexaImportExport\MessageHandler\JobRunMessageHandler;
-use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 class AsyncJobRunner extends AbstractJobRunner
 {
-    protected JobRunMessageHandler $jobRunMessageHandler;
-    protected JobRepository $jobRepository;
-
     public function __construct(
-        JobRunMessageHandler $jobRunMessageHandler,
-        JobRepository $jobRepository,
-        EventDispatcherInterface $eventDispatcher
+        protected JobRunMessageHandler $jobRunMessageHandler,
+        protected ExecutionRepository $executionRepository
     ) {
-        $this->jobRepository = $jobRepository;
-        $this->jobRunMessageHandler = $jobRunMessageHandler;
-        parent::__construct($eventDispatcher);
     }
 
-    protected function run(Job $job, int $batchLimit = -1): int
+    public function runExecution(Execution $execution, int $batchLimit = -1): int
     {
-        if ($job->isPaused()) {
-            $this->jobRunMessageHandler->triggerResume($job, $batchLimit);
-        } else {
-            $job->setStatus(Job::STATUS_QUEUED);
-            $this->jobRepository->save($job);
-            $this->jobRunMessageHandler->triggerStart($job, $batchLimit);
+        if ($execution->isPaused()) {
+            $this->jobRunMessageHandler->triggerResume($execution, $batchLimit);
+        } elseif ($execution->canRun()) {
+            $execution->setStatus(Execution::STATUS_QUEUED);
+            $this->executionRepository->save($execution);
+
+            $this->jobRunMessageHandler->triggerStart($execution, $batchLimit);
         }
 
-        return $job->getStatus();
+        return $execution->getStatus();
     }
 }

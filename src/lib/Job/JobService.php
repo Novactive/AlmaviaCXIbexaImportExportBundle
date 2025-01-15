@@ -4,38 +4,31 @@ declare(strict_types=1);
 
 namespace AlmaviaCX\Bundle\IbexaImportExport\Job;
 
+use AlmaviaCX\Bundle\IbexaImportExport\Execution\Execution;
+use AlmaviaCX\Bundle\IbexaImportExport\Execution\ExecutionRecord;
+use AlmaviaCX\Bundle\IbexaImportExport\Execution\ExecutionRepository;
 use DateTimeImmutable;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\Selectable;
 use Ibexa\Contracts\Core\SiteAccess\ConfigResolverInterface;
 
+/**
+ * @SuppressWarnings("PHPMD.TooManyPublicMethods")
+ */
 class JobService
 {
-    protected JobRepository $jobRepository;
-    protected JobRunnerInterface $jobRunner;
-    protected ConfigResolverInterface $configResolver;
-    protected JobDebugger $jobDebugger;
-
-    /**
-     * @param \AlmaviaCX\Bundle\IbexaImportExport\Job\JobRepository      $jobRepository
-     * @param \AlmaviaCX\Bundle\IbexaImportExport\Job\JobRunnerInterface $jobRunner
-     */
     public function __construct(
-        JobRepository $jobRepository,
-        JobRunnerInterface $jobRunner,
-        JobDebugger $jobDebugger,
-        ConfigResolverInterface $configResolver
+        protected JobRepository $jobRepository,
+        protected ExecutionRepository $executionRepository,
+        protected JobRunnerInterface $jobRunner,
+        protected JobDebugger $jobDebugger,
+        protected ConfigResolverInterface $configResolver
     ) {
-        $this->jobDebugger = $jobDebugger;
-        $this->configResolver = $configResolver;
-        $this->jobRepository = $jobRepository;
-        $this->jobRunner = $jobRunner;
     }
 
-    public function createJob(Job $job, bool $autoStart = true)
+    public function createJob(Job $job, bool $autoStart = false): void
     {
         $job->setRequestedDate(new DateTimeImmutable());
-        $job->setStatus(Job::STATUS_PENDING);
-
         $this->jobRepository->save($job);
 
         if ($autoStart) {
@@ -43,29 +36,39 @@ class JobService
         }
     }
 
-    public function runJob(Job $job, int $batchLimit = null, bool $reset = false): void
+    public function runJob(Job $job, int $batchLimit = null, bool $reset = false): int
     {
         if (!$batchLimit) {
             $batchLimit = $this->configResolver->getParameter('default_batch_limit', 'import_export');
         }
-        ($this->jobRunner)($job, $batchLimit, $reset);
+
+        return ($this->jobRunner)($job, $batchLimit, $reset);
     }
 
-    public function pause(Job $job): void
+    public function runExecution(Execution $execution, int $batchLimit = null): void
     {
-        $job->setStatus(Job::STATUS_FORCE_PAUSED);
-        $this->jobRepository->save($job);
+        if (!$batchLimit) {
+            $batchLimit = $this->configResolver->getParameter('default_batch_limit', 'import_export');
+        }
+
+        $this->jobRunner->runExecution($execution, $batchLimit);
     }
 
-    public function cancelJob(Job $job): void
+    public function pauseJobExecution(Execution $execution): void
     {
-        $job->setStatus(Job::STATUS_CANCELED);
-        $this->jobRepository->save($job);
+        $execution->setStatus(Execution::STATUS_FORCE_PAUSED);
+        $this->executionRepository->save($execution);
     }
 
-    public function debug(Job $job, int $index): void
+    public function cancelJobExecution(Execution $execution): void
     {
-        ($this->jobDebugger)($job, $index);
+        $execution->setStatus(Execution::STATUS_CANCELED);
+        $this->executionRepository->save($execution);
+    }
+
+    public function debugJobExecution(Execution $execution, int $index): void
+    {
+        ($this->jobDebugger)($execution, $index);
     }
 
     public function loadJobById(int $id): ?Job
@@ -78,7 +81,13 @@ class JobService
         return $this->jobRepository->count([]);
     }
 
-    public function loadJobs($limit = 10, $offset = 0): array
+    /**
+     * @param $limit
+     * @param $offset
+     *
+     * @return Job[]
+     */
+    public function loadJobs(int $limit = 10, int $offset = 0): array
     {
         return $this->jobRepository->findBy(
             [],
@@ -93,20 +102,25 @@ class JobService
         $this->jobRepository->delete($job);
     }
 
-    public function getJobLogs(Job $job, ?int $level = null): Collection
+    /**
+     * @return Collection<string, ExecutionRecord>|Selectable<string, ExecutionRecord>
+     */
+    public function getJobExecutionLogs(Execution $execution, ?int $level = null): Collection|Selectable
     {
         if (!$level) {
-            return $job->getRecords();
+            return $execution->getLoggerRecords();
         }
 
-        return $job->getRecordsForLevel($level);
+        return $execution->getRecordsForLevel($level);
     }
 
     /**
+     * @throws \Doctrine\DBAL\Driver\Exception
+     *
      * @return array<int, int>
      */
-    public function getJobLogsCountByLevel(Job $job): array
+    public function getJobExecutionLogsCountByLevel(Execution $execution): array
     {
-        return $this->jobRepository->getJobLogsCountByLevel($job->getId());
+        return $this->executionRepository->getExecutionLogsCountByLevel($execution->getId());
     }
 }

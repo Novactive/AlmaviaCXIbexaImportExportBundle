@@ -9,6 +9,9 @@ use ReflectionClass;
 
 class ComponentOptions
 {
+    /**
+     * @var array<string, bool>
+     */
     protected array $initializationState = [];
 
     public function __construct()
@@ -19,11 +22,17 @@ class ComponentOptions
         }
     }
 
+    /**
+     * @return array<string, bool>
+     */
     public function getInitializationState(): array
     {
         return $this->initializationState;
     }
 
+    /**
+     * @return string[]
+     */
     public function getInitializedOptions(): array
     {
         return array_keys(array_filter($this->initializationState, static function ($option) {
@@ -31,6 +40,9 @@ class ComponentOptions
         }));
     }
 
+    /**
+     * @return string[]
+     */
     public function getNonInitializedOptions(): array
     {
         return array_keys(array_filter($this->initializationState, static function ($option) {
@@ -43,6 +55,9 @@ class ComponentOptions
         return $this->initializationState[$name] ?? false;
     }
 
+    /**
+     * @return iterable<string>
+     */
     public function getAvailableOptions(): iterable
     {
         $properties = (new ReflectionClass(static::class))->getProperties();
@@ -54,7 +69,10 @@ class ComponentOptions
         }
     }
 
-    public function __set($name, $value)
+    /**
+     * @throws Exception
+     */
+    public function __set(string $name, mixed $value)
     {
         if (property_exists($this, $name)) {
             $this->initializationState[$name] = true;
@@ -66,12 +84,24 @@ class ComponentOptions
         throw new Exception("Option '{$name}' not found on '{$className}'");
     }
 
-    public function __get($name)
+    /**
+     * @return null
+     */
+    public function __get(string $name)
     {
-        return $this->{$name} ?? null;
+        if (!property_exists($this, $name)) {
+            return null;
+        }
+
+        return $this->{$name};
     }
 
-    public function merge(ComponentOptions $overrideOptions): ComponentOptions
+    /**
+     * @param static $overrideOptions
+     *
+     * @return $this
+     */
+    public function merge($overrideOptions): static
     {
         $availableOptions = $this->getNonInitializedOptions();
         foreach ($availableOptions as $availableOption) {
@@ -85,11 +115,11 @@ class ComponentOptions
     }
 
     /**
-     * @param callable(ComponentReference $componentReference): ComponentInterface $buildComponentCallback
-     * @param ?ComponentOptions $runtimeProcessConfiguration
+     * @param callable(ComponentReference $componentReference, ?ComponentOptions $runtimeProcessConfiguration): ComponentInterface<ComponentOptions> $componentBuilder
+     * @param static|null $runtimeProcessConfiguration
      */
     public function replaceComponentReferences(
-        $buildComponentCallback,
+        callable $componentBuilder,
         ?ComponentOptions $runtimeProcessConfiguration = null
     ): void {
     }

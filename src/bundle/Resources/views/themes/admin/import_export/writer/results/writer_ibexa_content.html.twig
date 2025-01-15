@@ -10,6 +10,16 @@
     {% endblock %}
     {% block details_items %}
         <div class="ibexa-details__items {{ view_mode|default('') == 'vertical' ? 'ibexa-details__items--vertical' }}">
+            <ul class="list-unstyled">
+                {% for contentId, infos in results['imported_content_ids']|default([]) %}
+                    <li>
+                        <span class="badge bg-success text-white">{{ infos['action'] }}</span>
+                        <a target="_blank" href="{{ url('ibexa.url.alias', {contentId: contentId}) }}">
+                            {{ infos['name'] }}
+                        </a>
+                    </li>
+                {% endfor %}
+            </ul>
         </div>
     {% endblock %}
 {% endembed %}

@@ -14,6 +14,11 @@ use Symfony\Component\Yaml\Yaml;
 
 class AlmaviaCXIbexaImportExportExtension extends Extension implements PrependExtensionInterface
 {
+    /**
+     * @param mixed[] $configs
+     *
+     * @throws \Exception
+     */
     public function load(array $configs, ContainerBuilder $container): void
     {
         $loader = new YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
@@ -29,6 +34,7 @@ class AlmaviaCXIbexaImportExportExtension extends Extension implements PrependEx
         $loader->load('item_value_transformer/transformers.yaml');
         $loader->load('workflow/component.yaml');
         $loader->load('workflow/job.yaml');
+        $loader->load('workflow/execution.yaml');
         $loader->load('workflow/workflow.yaml');
 
         $activatedBundles = array_keys($container->getParameter('kernel.bundles'));

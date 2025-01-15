@@ -8,10 +8,12 @@ use AlmaviaCX\Bundle\IbexaImportExport\Item\ItemAccessorInterface;
 use AlmaviaCX\Bundle\IbexaImportExport\Step\StepOptions;
 
 /**
- * @property callable(object|array $item): ?ItemAccessorInterface $callback
+ * @property callable(object|array<mixed, mixed> $item): ?ItemAccessorInterface $callback
  */
 class CallbackStepOptions extends StepOptions
 {
-    /** @var callable(object|array): ?ItemAccessorInterface */
+    /**
+     * @var callable(object|array<mixed, mixed>): ?ItemAccessorInterface
+     */
     protected $callback;
 }

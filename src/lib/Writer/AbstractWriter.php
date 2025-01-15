@@ -8,27 +8,28 @@ use AlmaviaCX\Bundle\IbexaImportExport\Item\ItemAccessorInterface;
 use AlmaviaCX\Bundle\IbexaImportExport\Item\Transformer\ItemTransformer;
 use AlmaviaCX\Bundle\IbexaImportExport\Item\Transformer\SourceResolver;
 use AlmaviaCX\Bundle\IbexaImportExport\Processor\AbstractProcessor;
-use AlmaviaCX\Bundle\IbexaImportExport\Reference\ReferenceBag;
 
+/**
+ * @phpstan-import-type ProcessableItem from \AlmaviaCX\Bundle\IbexaImportExport\Processor\ProcessorInterface
+ * @phpstan-import-type MappedItem from ItemTransformer
+ * @phpstan-import-type SourceObjectOrArray from ItemTransformer
+ *
+ * @template TWriterOptions of WriterOptions
+ * @extends  AbstractProcessor<TWriterOptions>
+ * @implements WriterInterface<TWriterOptions>
+ */
 abstract class AbstractWriter extends AbstractProcessor implements WriterInterface
 {
-    protected ItemTransformer $itemTransformer;
-    protected ReferenceBag $referenceBag;
-    protected SourceResolver $sourceResolver;
     protected WriterResults $results;
 
     public function __construct(
-        SourceResolver $sourceResolver,
-        ItemTransformer $itemTransformer,
-        ReferenceBag $references
+        protected SourceResolver $sourceResolver,
+        protected ItemTransformer $itemTransformer,
     ) {
-        $this->sourceResolver = $sourceResolver;
-        $this->referenceBag = $references;
-        $this->itemTransformer = $itemTransformer;
         $this->results = new WriterResults(static::class, []);
     }
 
-    public static function getOptionsType(): ?string
+    public static function getOptionsType(): string
     {
         return WriterOptions::class;
     }
@@ -47,50 +48,69 @@ abstract class AbstractWriter extends AbstractProcessor implements WriterInterfa
     }
 
     /**
-     * @param object|array $item
-     *
-     * @return \AlmaviaCX\Bundle\IbexaImportExport\Item\ItemAccessorInterface|false|null
+     * @throws \AlmaviaCX\Bundle\IbexaImportExport\Exception\SourceResolutionException
      */
-    public function processItem($item)
+    public function processItem($item): mixed
     {
         $writenItem = $this->writeItem($item, $this->mapItem($item));
         $this->setReferences($writenItem);
+
+        return null;
     }
 
+    /**
+     * @param SourceObjectOrArray $objectOrArray
+     *
+     * @throws \AlmaviaCX\Bundle\IbexaImportExport\Exception\SourceResolutionException
+     */
     protected function setReferences($objectOrArray): void
     {
-        /** @var \AlmaviaCX\Bundle\IbexaImportExport\Writer\WriterOptions $options */
+        /** @var WriterOptions $options */
         $options = $this->getOptions();
         if (null === $options->referencesMap) {
             return;
         }
         foreach ($options->referencesMap->getElements() as $referenceName => $referenceSource) {
-            $value = ($this->sourceResolver)($referenceSource, $objectOrArray);
+            $value = ($this->sourceResolver)(
+                $referenceSource,
+                $objectOrArray,
+                $this->referenceBag
+            );
             $this->referenceBag->addReference($referenceName, $value, $referenceSource->getScope());
         }
     }
 
     /**
-     * @param object|array                    $item
-     * @param array<int|string, mixed>|object $mappedItem
+     * @param ProcessableItem $item
+     * @param MappedItem      $mappedItem
      *
-     * @return false|ItemAccessorInterface|null
+     * @return MappedItem|ItemAccessorInterface|false|null
      */
     abstract protected function writeItem($item, $mappedItem);
 
     /**
-     * @param object|array $item
+     * @param ProcessableItem $item
      *
-     * @return array<int|string, mixed>|object
+     * @throws \AlmaviaCX\Bundle\IbexaImportExport\Exception\SourceResolutionException
+     *
+     * @return MappedItem
      */
     protected function mapItem($item)
     {
         /** @var \AlmaviaCX\Bundle\IbexaImportExport\Writer\WriterOptions $options */
         $options = $this->getOptions();
 
-        return ($this->itemTransformer)($item, $options->map, $this->getMappedItemInstance());
+        return ($this->itemTransformer)(
+            $item,
+            $options->map,
+            $this->getMappedItemInstance(),
+            $this->referenceBag
+        );
     }
 
+    /**
+     * @return MappedItem
+     */
     protected function getMappedItemInstance()
     {
         return [];

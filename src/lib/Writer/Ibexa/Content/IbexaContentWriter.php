@@ -7,7 +7,6 @@ namespace AlmaviaCX\Bundle\IbexaImportExport\Writer\Ibexa\Content;
 use AlmaviaCX\Bundle\IbexaImportExport\Accessor\Ibexa\ObjectAccessorBuilder;
 use AlmaviaCX\Bundle\IbexaImportExport\Item\Transformer\ItemTransformer;
 use AlmaviaCX\Bundle\IbexaImportExport\Item\Transformer\SourceResolver;
-use AlmaviaCX\Bundle\IbexaImportExport\Reference\ReferenceBag;
 use AlmaviaCX\Bundle\IbexaImportExport\Writer\AbstractWriter;
 use Ibexa\Contracts\Core\Repository\Exceptions\ContentFieldValidationException;
 use Ibexa\Contracts\Core\Repository\Repository;
@@ -15,27 +14,22 @@ use JMS\TranslationBundle\Model\Message;
 use JMS\TranslationBundle\Translation\TranslationContainerInterface;
 use Symfony\Component\Translation\TranslatableMessage;
 
+/**
+ * @extends AbstractWriter<IbexaContentWriterOptions>
+ */
 class IbexaContentWriter extends AbstractWriter implements TranslationContainerInterface
 {
-    protected Repository $repository;
-    protected IbexaContentImporter $contentImporter;
-    protected ObjectAccessorBuilder $objectAccessorBuilder;
-
     public function __construct(
-        Repository $repository,
-        IbexaContentImporter $contentImporter,
-        ObjectAccessorBuilder $objectAccessorBuilder,
+        protected Repository $repository,
+        protected IbexaContentImporter $contentImporter,
+        protected ObjectAccessorBuilder $objectAccessorBuilder,
         SourceResolver $sourceResolver,
         ItemTransformer $itemTransformer,
-        ReferenceBag $references
     ) {
-        $this->repository = $repository;
-        $this->contentImporter = $contentImporter;
-        $this->objectAccessorBuilder = $objectAccessorBuilder;
-        parent::__construct($sourceResolver, $itemTransformer, $references);
+        parent::__construct($sourceResolver, $itemTransformer);
     }
 
-    protected function getMappedItemInstance()
+    protected function getMappedItemInstance(): IbexaContentData
     {
         return new IbexaContentData();
     }

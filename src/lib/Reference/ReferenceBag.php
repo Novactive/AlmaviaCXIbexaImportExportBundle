@@ -6,10 +6,10 @@ namespace AlmaviaCX\Bundle\IbexaImportExport\Reference;
 
 class ReferenceBag
 {
-    /** @var array{mixed, mixed} */
+    /** @var array<int, array<string, mixed>> */
     protected array $references = [];
 
-    public function addReference(string $name, $value, int $scope = Reference::SCOPE_ITEM): void
+    public function addReference(string $name, mixed $value, int $scope = Reference::SCOPE_ITEM): void
     {
         if (!isset($this->references[$scope])) {
             $this->references[$scope] = [];
@@ -22,7 +22,7 @@ class ReferenceBag
         return isset($this->references[$scope][$name]);
     }
 
-    public function getReference(string $name, $default = null, int $scope = Reference::SCOPE_ITEM)
+    public function getReference(string $name, mixed $default = null, int $scope = Reference::SCOPE_ITEM): mixed
     {
         return $this->references[$scope][$name] ?? $default;
     }
@@ -32,12 +32,12 @@ class ReferenceBag
         unset($this->references[$scope]);
     }
 
-    public function __set(string $name, $value): void
+    public function __set(string $name, mixed $value): void
     {
         $this->addReference($name, $value);
     }
 
-    public function __get(string $name)
+    public function __get(string $name): mixed
     {
         return $this->getReference($name);
     }

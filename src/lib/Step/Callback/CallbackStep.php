@@ -9,12 +9,12 @@ use JMS\TranslationBundle\Model\Message;
 use JMS\TranslationBundle\Translation\TranslationContainerInterface;
 use Symfony\Component\Translation\TranslatableMessage;
 
+/**
+ * @extends AbstractStep<CallbackStepOptions>
+ */
 class CallbackStep extends AbstractStep implements TranslationContainerInterface
 {
-    /**
-     * {@inheritDoc}
-     */
-    public function processItem($item)
+    public function processItem($item): mixed
     {
         /** @var \AlmaviaCX\Bundle\IbexaImportExport\Step\Callback\CallbackStepOptions $options */
         $options = $this->getOptions();

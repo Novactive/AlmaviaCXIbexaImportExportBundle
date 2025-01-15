@@ -1,0 +1,26 @@
+<?php
+
+declare(strict_types=1);
+
+namespace AlmaviaCX\Bundle\IbexaImportExport\Reader\SalesforceSoql;
+
+use AlmaviaCX\Bundle\IbexaImportExport\Reader\ReaderOptions;
+use AlmaviaCX\Bundle\IbexaImportExport\Salesforce\SalesforceApiCredentials;
+
+/**
+ * @property string                   $queryString
+ * @property string                   $countQueryString
+ * @property int                      $batchSize
+ * @property string                   $domain
+ * @property string                   $version
+ * @property SalesforceApiCredentials $credentials
+ */
+class SalesforceSoqlReaderOptions extends ReaderOptions
+{
+    protected string $queryString;
+    protected string $countQueryString;
+    protected int $batchSize = 25;
+    protected string $domain;
+    protected string $version;
+    protected SalesforceApiCredentials $credentials;
+}

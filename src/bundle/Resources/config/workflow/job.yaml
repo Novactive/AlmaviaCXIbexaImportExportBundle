@@ -9,6 +9,7 @@ services:
     AlmaviaCX\Bundle\IbexaImportExport\Job\JobService:
         arguments:
             $jobRepository: '@AlmaviaCX\Bundle\IbexaImportExport\Job\JobRepository'
+            $executionRepository: '@AlmaviaCX\Bundle\IbexaImportExport\Execution\ExecutionRepository'
             $jobRunner: '@AlmaviaCX\Bundle\IbexaImportExport\Job\JobRunnerInterface'
             $jobDebugger: '@AlmaviaCX\Bundle\IbexaImportExport\Job\JobDebugger'
             $configResolver: '@Ibexa\Contracts\Core\SiteAccess\ConfigResolverInterface'
@@ -16,13 +17,9 @@ services:
     AlmaviaCX\Bundle\IbexaImportExport\Job\JobRunnerInterface: '@AlmaviaCX\Bundle\IbexaImportExport\Job\JobRunner'
     AlmaviaCX\Bundle\IbexaImportExport\Job\JobRunner:
         arguments:
-            $workflowExecutor: '@AlmaviaCX\Bundle\IbexaImportExport\Workflow\WorkflowExecutor'
-            $workflowRegistry: '@AlmaviaCX\Bundle\IbexaImportExport\Workflow\WorkflowRegistry'
-            $eventDispatcher: '@Symfony\Contracts\EventDispatcher\EventDispatcherInterface'
-            $jobRepository: '@AlmaviaCX\Bundle\IbexaImportExport\Job\JobRepository'
+            $executionRunner: '@AlmaviaCX\Bundle\IbexaImportExport\Execution\ExecutionRunner'
 
     AlmaviaCX\Bundle\IbexaImportExport\Job\JobDebugger:
         arguments:
             $workflowExecutor: '@AlmaviaCX\Bundle\IbexaImportExport\Workflow\WorkflowExecutor'
             $workflowRegistry: '@AlmaviaCX\Bundle\IbexaImportExport\Workflow\WorkflowRegistry'
-

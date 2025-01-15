@@ -11,21 +11,12 @@ use Ibexa\Taxonomy\Exception\TaxonomyEntryNotFoundException;
 
 class IbexaTaxonomyImporter
 {
-    protected Repository $repository;
-    protected TaxonomyServiceInterface $taxonomyService;
-    protected IbexaTaxonomyCreator $taxonomyCreator;
-    protected IbexaTaxonomyUpdater $taxonomyUpdater;
-
     public function __construct(
-        Repository $repository,
-        TaxonomyServiceInterface $taxonomyService,
-        IbexaTaxonomyCreator $taxonomyCreator,
-        IbexaTaxonomyUpdater $taxonomyUpdater,
+        protected Repository $repository,
+        protected TaxonomyServiceInterface $taxonomyService,
+        protected IbexaTaxonomyCreator $taxonomyCreator,
+        protected IbexaTaxonomyUpdater $taxonomyUpdater,
     ) {
-        $this->taxonomyUpdater = $taxonomyUpdater;
-        $this->taxonomyCreator = $taxonomyCreator;
-        $this->taxonomyService = $taxonomyService;
-        $this->repository = $repository;
     }
 
     public function __invoke(IbexaTaxonomyData $ibexaTaxonomyData, bool $allowUpdate = true): TaxonomyEntry

@@ -7,23 +7,30 @@ namespace AlmaviaCX\Bundle\IbexaImportExport\Processor\Aggregator;
 use AlmaviaCX\Bundle\IbexaImportExport\Monolog\WorkflowLoggerInterface;
 use AlmaviaCX\Bundle\IbexaImportExport\Processor\AbstractProcessor;
 use AlmaviaCX\Bundle\IbexaImportExport\Processor\ProcessorInterface;
+use AlmaviaCX\Bundle\IbexaImportExport\Processor\ProcessorOptions;
 use JMS\TranslationBundle\Annotation\Desc;
 use Symfony\Component\Translation\TranslatableMessage;
 use Throwable;
 
+/**
+ * Processor used to fork the processing of an item to multiple processors.
+ *
+ * @extends AbstractProcessor<ProcessorAggregatorOptions>
+ * @implements ProcessorInterface<ProcessorAggregatorOptions>
+ */
 class ProcessorAggregator extends AbstractProcessor implements ProcessorInterface
 {
     /**
-     * {@inheritDoc}
+     * @throws \Throwable
      */
-    public function processItem($item)
+    public function processItem($item): mixed
     {
         $processors = $this->getProcessors();
         try {
             foreach ($processors as $processor) {
                 $item = ($processor)($item);
                 if (false === $item) {
-                    return;
+                    return null;
                 }
             }
         } catch (Throwable $e) {
@@ -31,17 +38,19 @@ class ProcessorAggregator extends AbstractProcessor implements ProcessorInterfac
                 throw $e;
             }
             $this->logger->logException($e);
-
-            return null;
         }
+
+        return null;
     }
 
     /**
-     * @return array<ProcessorInterface>
+     * @return array<ProcessorInterface<ProcessorOptions>>
      */
     public function getProcessors(): array
     {
-        return $this->getOption('processors', []);
+        $options = $this->getOptions();
+
+        return $options->processors;
     }
 
     public function setLogger(WorkflowLoggerInterface $logger): void
@@ -63,7 +72,7 @@ class ProcessorAggregator extends AbstractProcessor implements ProcessorInterfac
         return new TranslatableMessage(/* @Desc("Aggregator") */ 'processor.aggregator.name');
     }
 
-    public static function getOptionsType(): ?string
+    public static function getOptionsType(): string
     {
         return ProcessorAggregatorOptions::class;
     }

@@ -4,13 +4,11 @@ declare(strict_types=1);
 
 namespace AlmaviaCX\Bundle\IbexaImportExport\Job;
 
-use AlmaviaCX\Bundle\IbexaImportExport\Processor\ProcessorOptions;
-use AlmaviaCX\Bundle\IbexaImportExport\Reader\ReaderOptions;
+use AlmaviaCX\Bundle\IbexaImportExport\Execution\Execution;
+use AlmaviaCX\Bundle\IbexaImportExport\Execution\ExecutionOptions;
 use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use Doctrine\Common\Collections\Criteria;
-use Doctrine\Common\Collections\Expr\Comparison;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -19,12 +17,6 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Job
 {
-    public const STATUS_PENDING = 0;
-    public const STATUS_RUNNING = 1;
-    public const STATUS_COMPLETED = 2;
-    public const STATUS_QUEUED = 3;
-    public const STATUS_PAUSED = 4;
-
     /**
      * @ORM\Id
      * @ORM\GeneratedValue()
@@ -43,34 +35,9 @@ class Job
     protected ?string $workflowIdentifier = null;
 
     /**
-     * @ORM\Column
-     */
-    protected int $status = self::STATUS_PENDING;
-
-    /**
-     * @ORM\Column
-     */
-    protected int $processedItemsCount = 0;
-
-    /**
-     * @ORM\Column
-     */
-    protected int $totalItemsCount = 0;
-
-    /**
      * @ORM\Column(type="datetime_immutable")
      */
     protected DateTimeImmutable $requestedDate;
-
-    /**
-     * @ORM\Column(type="datetime_immutable", nullable=true)
-     */
-    protected ?DateTimeImmutable $startTime = null;
-
-    /**
-     * @ORM\Column(type="datetime_immutable", nullable=true)
-     */
-    protected ?DateTimeImmutable $endTime = null;
 
     /**
      * @ORM\Column
@@ -79,33 +46,26 @@ class Job
 
     /**
      * @ORM\Column(type="object")
-     *
-     * @var array{reader?: ReaderOptions, processors?: array<mixed, ProcessorOptions>}
      */
-    protected array $options = [];
+    protected ExecutionOptions $options;
 
     /**
      * @ORM\OneToMany(
-     *     targetEntity=JobRecord::class,
+     *     targetEntity=Execution::class,
      *     mappedBy="job",
      *     cascade={"persist", "remove"},
      *     orphanRemoval=true,
-     *     fetch="EXTRA_LAZY",
-     *     indexBy="identifier"
+     *     fetch="EXTRA_LAZY"
      * )
      *
-     * @var Collection<JobRecord>
+     * @var Collection<int, Execution>
      */
-    protected ?Collection $records = null;
+    protected Collection $executions;
 
-    /**
-     * @ORM\Column(type="text", nullable=true)
-     */
-    protected ?string $writerResults = null;
-
-    public function __construct()
+    public function __construct(ExecutionOptions $options = new ExecutionOptions())
     {
-        $this->records = new ArrayCollection();
+        $this->executions = new ArrayCollection();
+        $this->options = $options;
     }
 
     public function getId(): int
@@ -138,16 +98,6 @@ class Job
         $this->workflowIdentifier = $workflowIdentifier;
     }
 
-    public function getStatus(): int
-    {
-        return $this->status;
-    }
-
-    public function setStatus(int $status): void
-    {
-        $this->status = $status;
-    }
-
     public function getRequestedDate(): DateTimeImmutable
     {
         return $this->requestedDate;
@@ -156,26 +106,6 @@ class Job
     public function setRequestedDate(DateTimeImmutable $requestedDate): void
     {
         $this->requestedDate = $requestedDate;
-    }
-
-    public function getStartTime(): ?DateTimeImmutable
-    {
-        return $this->startTime;
-    }
-
-    public function setStartTime(?DateTimeImmutable $startTime): void
-    {
-        $this->startTime = $startTime;
-    }
-
-    public function getEndTime(): ?DateTimeImmutable
-    {
-        return $this->endTime;
-    }
-
-    public function setEndTime(?DateTimeImmutable $endTime): void
-    {
-        $this->endTime = $endTime;
     }
 
     public function getCreatorId(): int
@@ -188,116 +118,40 @@ class Job
         $this->creatorId = $creatorId;
     }
 
-    /**
-     * @return array{reader?: ReaderOptions, processors?: array<mixed, ProcessorOptions>}
-     */
-    public function getOptions(): array
+    public function getOptions(): ExecutionOptions
     {
         return $this->options;
     }
 
-    /**
-     * @param array{reader?: ReaderOptions, processors?: array<mixed, ProcessorOptions>} $options
-     */
-    public function setOptions(array $options): void
+    public function setOptions(ExecutionOptions $options): void
     {
         $this->options = $options;
     }
 
     /**
-     * @return \Doctrine\Common\Collections\Collection<JobRecord>
+     * @return Collection<int, Execution>
      */
-    public function getRecords(): Collection
+    public function getExecutions(): Collection
     {
-        return $this->records;
-    }
-
-    public function getRecordsForLevel(int $level): Collection
-    {
-        $criteria = new Criteria();
-        $criteria->where(new Comparison('level', '=', $level));
-
-        return $this->records->matching($criteria);
+        return $this->executions;
     }
 
     /**
-     * @param array<JobRecord> $records
+     * @param Collection<int, Execution> $executions
      */
-    public function setRecords(array $records): void
+    public function setExecutions(Collection $executions): void
     {
-        $this->records->clear();
-        foreach ($records as $record) {
-            $this->addRecord($record);
-        }
+        $this->executions = $executions;
     }
 
-    /**
-     * @param array<JobRecord> $records
-     */
-    public function addRecords(array $records): void
+    public function addExecution(Execution $execution): void
     {
-        foreach ($records as $record) {
-            $this->addRecord($record);
-        }
+        $execution->setJob($this);
+        $this->executions->add($execution);
     }
 
-    public function addRecord(JobRecord $record): void
+    public function getLastExecution(): Execution|false
     {
-        if (!$this->records) {
-            $this->records = new ArrayCollection();
-        }
-        if (!$this->records->containsKey($record->getIdentifier())) {
-            $record->setJob($this);
-            $this->records->set($record->getIdentifier(), $record);
-        }
-    }
-
-    /**
-     * @return \AlmaviaCX\Bundle\IbexaImportExport\Writer\WriterResults[]
-     */
-    public function getWriterResults(): array
-    {
-        return $this->writerResults ? unserialize($this->writerResults) : [];
-    }
-
-    public function setWriterResults(array $writerResults): void
-    {
-        $this->writerResults = serialize($writerResults);
-    }
-
-    public function getProcessedItemsCount(): int
-    {
-        return $this->processedItemsCount;
-    }
-
-    public function setProcessedItemsCount(int $processedItemsCount): void
-    {
-        $this->processedItemsCount = $processedItemsCount;
-    }
-
-    public function getTotalItemsCount(): int
-    {
-        return $this->totalItemsCount;
-    }
-
-    public function setTotalItemsCount(int $totalItemsCount): void
-    {
-        $this->totalItemsCount = $totalItemsCount;
-    }
-
-    public function getProgress(): float
-    {
-        return $this->totalItemsCount > 0 ? $this->processedItemsCount / $this->totalItemsCount : 0;
-    }
-
-    public function reset(): void
-    {
-        $this->startTime = null;
-        $this->endTime = null;
-        $this->records = new ArrayCollection();
-        $this->writerResults = null;
-        $this->status = self::STATUS_PENDING;
-        $this->totalItemsCount = 0;
-        $this->processedItemsCount = 0;
+        return $this->executions->last();
     }
 }

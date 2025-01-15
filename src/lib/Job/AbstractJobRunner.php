@@ -4,31 +4,28 @@ declare(strict_types=1);
 
 namespace AlmaviaCX\Bundle\IbexaImportExport\Job;
 
-use AlmaviaCX\Bundle\IbexaImportExport\Event\ResetJobRunEvent;
-use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
+use AlmaviaCX\Bundle\IbexaImportExport\Execution\Execution;
 
 abstract class AbstractJobRunner implements JobRunnerInterface
 {
-    protected EventDispatcherInterface $eventDispatcher;
-
-    public function __construct(EventDispatcherInterface $eventDispatcher)
-    {
-        $this->eventDispatcher = $eventDispatcher;
-    }
-
     public function __invoke(Job $job, int $batchLimit = -1, bool $reset = false): int
     {
-        if ($reset || Job::STATUS_COMPLETED === $job->getStatus()) {
-            $this->eventDispatcher->dispatch(new ResetJobRunEvent($job));
-            $job->reset();
+        $execution = $job->getLastExecution();
+        if ($reset && $execution) {
+            $execution->setStatus(Execution::STATUS_CANCELED);
         }
 
-        if (Job::STATUS_PAUSED !== $job->getStatus() || Job::STATUS_PENDING !== $job->getStatus()) {
-            return $this->run($job, $batchLimit);
+        if (!$execution || $execution->isDone()) {
+            $execution = new Execution();
+            $job->addExecution($execution);
         }
 
-        return $job->getStatus();
+        if (!$execution->canRun()) {
+            return $execution->getStatus();
+        }
+
+        return $this->runExecution($execution, $batchLimit);
     }
 
-    abstract protected function run(Job $job, int $batchLimit = -1): int;
+    abstract public function runExecution(Execution $execution, int $batchLimit = -1): int;
 }

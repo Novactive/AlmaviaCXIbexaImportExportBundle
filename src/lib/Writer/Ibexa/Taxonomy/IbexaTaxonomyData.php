@@ -10,7 +10,7 @@ class IbexaTaxonomyData
 {
     protected string $identifier;
     protected string $parentIdentifier;
-    /** @var array<string, mixed> */
+    /** @var array<string, string> */
     protected array $names = [];
     protected string $taxonomyName;
     protected string $contentRemoteId;
@@ -39,11 +39,17 @@ class IbexaTaxonomyData
         $this->parentIdentifier = $parentIdentifier;
     }
 
+    /**
+     * @return array<string, string>
+     */
     public function getNames(): array
     {
         return $this->names;
     }
 
+    /**
+     * @param array<string,string> $names
+     */
     public function setNames(array $names): void
     {
         $this->names = $names;

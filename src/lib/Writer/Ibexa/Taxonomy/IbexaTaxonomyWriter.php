@@ -7,7 +7,6 @@ namespace AlmaviaCX\Bundle\IbexaImportExport\Writer\Ibexa\Taxonomy;
 use AlmaviaCX\Bundle\IbexaImportExport\Accessor\Ibexa\Taxonomy\TaxonomyAccessorBuilder;
 use AlmaviaCX\Bundle\IbexaImportExport\Item\Transformer\ItemTransformer;
 use AlmaviaCX\Bundle\IbexaImportExport\Item\Transformer\SourceResolver;
-use AlmaviaCX\Bundle\IbexaImportExport\Reference\ReferenceBag;
 use AlmaviaCX\Bundle\IbexaImportExport\Writer\AbstractWriter;
 use Ibexa\Contracts\Core\Repository\Exceptions\ContentFieldValidationException;
 use Ibexa\Contracts\Core\Repository\Repository;
@@ -15,27 +14,22 @@ use JMS\TranslationBundle\Model\Message;
 use JMS\TranslationBundle\Translation\TranslationContainerInterface;
 use Symfony\Component\Translation\TranslatableMessage;
 
+/**
+ * @extends AbstractWriter<IbexaTaxonomyWriterOptions>
+ */
 class IbexaTaxonomyWriter extends AbstractWriter implements TranslationContainerInterface
 {
-    protected Repository $repository;
-    protected IbexaTaxonomyImporter $taxonomyImporter;
-    protected TaxonomyAccessorBuilder $taxonomyAccessorBuilder;
-
     public function __construct(
-        Repository $repository,
-        IbexaTaxonomyImporter $taxonomyImporter,
-        TaxonomyAccessorBuilder $taxonomyAccessorBuilder,
+        protected Repository $repository,
+        protected IbexaTaxonomyImporter $taxonomyImporter,
+        protected TaxonomyAccessorBuilder $taxonomyAccessorBuilder,
         SourceResolver $sourceResolver,
         ItemTransformer $itemTransformer,
-        ReferenceBag $references
     ) {
-        $this->repository = $repository;
-        $this->taxonomyImporter = $taxonomyImporter;
-        $this->taxonomyAccessorBuilder = $taxonomyAccessorBuilder;
-        parent::__construct($sourceResolver, $itemTransformer, $references);
+        parent::__construct($sourceResolver, $itemTransformer);
     }
 
-    protected function getMappedItemInstance()
+    protected function getMappedItemInstance(): IbexaTaxonomyData
     {
         return new IbexaTaxonomyData();
     }

@@ -11,11 +11,9 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class RemoveWrittenFilesEventSubscriber implements EventSubscriberInterface
 {
-    protected FileHandler $fileHandler;
-
-    public function __construct(FileHandler $fileHandler)
-    {
-        $this->fileHandler = $fileHandler;
+    public function __construct(
+        protected FileHandler $fileHandler
+    ) {
     }
 
     public static function getSubscribedEvents(): array
@@ -25,9 +23,12 @@ class RemoveWrittenFilesEventSubscriber implements EventSubscriberInterface
         ];
     }
 
-    public function onResetJob(ResetJobRunEvent $event)
+    /**
+     * @throws \League\Flysystem\FilesystemException
+     */
+    public function onResetJob(ResetJobRunEvent $event): void
     {
-        $job = $event->getJob();
+        $job = $event->getExecution();
         $results = $job->getWriterResults();
 
         foreach ($results as $result) {

@@ -4,14 +4,23 @@ declare(strict_types=1);
 
 namespace AlmaviaCX\Bundle\IbexaImportExport\Component;
 
+use InvalidArgumentException;
+
 class ComponentReference
 {
-    protected string $type;
     protected ?ComponentOptions $options = null;
 
-    public function __construct(string $type, ?ComponentOptions $options = null)
-    {
-        $this->type = $type;
+    public function __construct(
+        protected string $type,
+        ?ComponentOptions $options = null
+    ) {
+        $requiredOptionsType = call_user_func([$type, 'getOptionsType']);
+        if (!$options && $requiredOptionsType) {
+            $options = new $requiredOptionsType();
+        }
+        if (!$options instanceof $requiredOptionsType) {
+            throw new InvalidArgumentException('Options must be an instance of '.$requiredOptionsType);
+        }
         $this->options = $options;
     }
 

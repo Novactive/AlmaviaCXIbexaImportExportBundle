@@ -5,28 +5,38 @@ declare(strict_types=1);
 namespace AlmaviaCX\Bundle\IbexaImportExport\Component;
 
 use AlmaviaCX\Bundle\IbexaImportExport\Monolog\WorkflowLoggerInterface;
+use AlmaviaCX\Bundle\IbexaImportExport\Reference\ReferenceBag;
 use Symfony\Component\Translation\TranslatableMessage;
 
+/**
+ * @template TOptions of ComponentOptions
+ */
 interface ComponentInterface
 {
-    /**
-     * Component name.
-     *
-     * @return string|TranslatableMessage
-     */
-    public static function getName();
+    public static function getName(): TranslatableMessage|string;
 
     public static function getOptionsFormType(): ?string;
 
-    public static function getOptionsType(): ?string;
+    /**
+     * @return class-string<TOptions>
+     */
+    public static function getOptionsType(): string;
 
-    public function setOptions(ComponentOptions $options): void;
+    /**
+     * @param TOptions $options
+     */
+    public function setOptions($options): void;
 
-    public function getOptions(): ComponentOptions;
+    /**
+     * @return TOptions
+     */
+    public function getOptions();
 
     public function clean(): void;
 
     public function setLogger(WorkflowLoggerInterface $logger): void;
+
+    public function setReferenceBag(ReferenceBag $referenceBag): void;
 
     public function prepare(): void;
 

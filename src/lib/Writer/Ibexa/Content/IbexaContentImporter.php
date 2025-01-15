@@ -6,21 +6,15 @@ namespace AlmaviaCX\Bundle\IbexaImportExport\Writer\Ibexa\Content;
 
 use Ibexa\Contracts\Core\Repository\Exceptions\NotFoundException;
 use Ibexa\Contracts\Core\Repository\Repository;
+use Ibexa\Contracts\Core\Repository\Values\Content\Content;
 
 class IbexaContentImporter
 {
-    protected Repository $repository;
-    protected IbexaContentUpdater $contentUpdater;
-    protected IbexaContentCreator $contentCreator;
-
     public function __construct(
-        Repository $repository,
-        IbexaContentUpdater $contentUpdater,
-        IbexaContentCreator $contentCreator
+        protected Repository $repository,
+        protected IbexaContentUpdater $contentUpdater,
+        protected IbexaContentCreator $contentCreator
     ) {
-        $this->contentCreator = $contentCreator;
-        $this->contentUpdater = $contentUpdater;
-        $this->repository = $repository;
     }
 
     /**
@@ -32,10 +26,8 @@ class IbexaContentImporter
      * @throws \Ibexa\Contracts\Core\Repository\Exceptions\InvalidArgumentException
      * @throws \Ibexa\Contracts\Core\Repository\Exceptions\NotFoundException
      * @throws \Ibexa\Contracts\Core\Repository\Exceptions\UnauthorizedException
-     *
-     * @return \Ibexa\Contracts\Core\Repository\Values\Content\Content
      */
-    public function __invoke(IbexaContentData $contentData, bool $allowUpdate = true)
+    public function __invoke(IbexaContentData $contentData, bool $allowUpdate = true): Content
     {
         $remoteId = $contentData->getContentRemoteId();
         $ownerId = $contentData->getOwnerId();

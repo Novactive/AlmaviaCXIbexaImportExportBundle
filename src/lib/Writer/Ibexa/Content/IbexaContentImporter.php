@@ -52,7 +52,8 @@ class IbexaContentImporter
                     $contentData->getFields(),
                     $contentData->getParentLocationIdList(),
                     $ownerId,
-                    $contentData->getMainLanguageCode()
+                    $contentData->getMainLanguageCode(),
+                    $contentData->isHidden()
                 );
             } catch (NotFoundException $exception) {
                 return ($this->contentCreator)(
@@ -63,7 +64,8 @@ class IbexaContentImporter
                     $ownerId,
                     $contentData->getMainLanguageCode(),
                     $contentData->getSectionId(),
-                    $contentData->getModificationDate()
+                    $contentData->getModificationDate(),
+                    $contentData->isHidden()
                 );
             }
         } catch (\Throwable $exception) {

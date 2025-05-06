@@ -19,6 +19,7 @@ class IbexaContentData
     protected array $parentLocationIdList = [2];
     protected ?int $sectionId = null;
     protected int|null|DateTime $modificationDate = null;
+    protected bool $hidden = false;
 
     public function getContentRemoteId(): string
     {
@@ -110,5 +111,15 @@ class IbexaContentData
     public function setModificationDate(DateTime|int|null $modificationDate): void
     {
         $this->modificationDate = $modificationDate;
+    }
+
+    public function isHidden(): bool
+    {
+        return $this->hidden;
+    }
+
+    public function setHidden(bool $hidden): void
+    {
+        $this->hidden = $hidden;
     }
 }

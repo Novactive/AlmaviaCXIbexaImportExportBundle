@@ -80,7 +80,9 @@
             }]) %}
 
             {% set progress_bar %}
-                {% include '@ibexadesign/import_export/components/progress_bar.html.twig' with {processedCount: job.lastExecution.workflowState.offset, totalCount: job.lastExecution.workflowState.totalItemsCount} only %}
+                {% if job.lastExecution %}
+                    {% include '@ibexadesign/import_export/components/progress_bar.html.twig' with {processedCount: job.lastExecution.workflowState.offset, totalCount: job.lastExecution.workflowState.totalItemsCount} only %}
+                {% endif %}
             {% endset %}
             {% set body_row_cols = body_row_cols|merge([{
                 content: progress_bar,
@@ -88,7 +90,7 @@
             }]) %}
 
             {% set body_row_cols = body_row_cols|merge([
-                { content: status[job.lastExecution.status]  },
+                { content: job.lastExecution ? status[job.lastExecution.status] : null  },
                 { content: job.requestedDate|ibexa_full_datetime  },
             ]) %}
 

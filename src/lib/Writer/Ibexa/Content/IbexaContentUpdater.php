@@ -117,6 +117,14 @@ class IbexaContentUpdater extends AbstractIbexaContentHandler
 
         foreach ($existingLocations as $existingLocation) {
             if ($existingLocation->parentLocationId === $parentLocationId) {
+                if ($existingLocation->hidden !== $hidden) {
+                    if ($hidden) {
+                        $this->repository->getLocationService()->hideLocation($existingLocation);
+                    } else {
+                        $this->repository->getLocationService()->unhideLocation($existingLocation);
+                    }
+                }
+
                 return $existingLocation;
             }
         }

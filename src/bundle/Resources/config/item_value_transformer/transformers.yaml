@@ -64,3 +64,7 @@ services:
     AlmaviaCX\Bundle\IbexaImportExport\Item\ValueTransformer\Ibexa\HtmlToTextBlockTransformer:
         tags:
             - { name: almaviacx.import_export.item.value_transformer, alias: almaviacx.import_export.item.value_transformer.html_to_textblock}
+
+    AlmaviaCX\Bundle\IbexaImportExport\Item\ValueTransformer\Utils\DefaultTransformer:
+        tags:
+            - { name: almaviacx.import_export.item.value_transformer, alias: almaviacx.import_export.item.value_transformer.default}

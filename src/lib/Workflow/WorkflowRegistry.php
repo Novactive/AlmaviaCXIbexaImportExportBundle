@@ -29,7 +29,8 @@ class WorkflowRegistry
         int $requiredAvailability = WorkflowConfiguration::AVAILABILITY_ADMIN_UI
     ): array {
         $workflows = [];
-        foreach ($this->availableWorkflowServices as $identifier => $workflowServiceClassName) {
+        $availableWorkflowServicesIdentifiers = array_keys($this->availableWorkflowServices);
+        foreach ($availableWorkflowServicesIdentifiers as $identifier) {
             $workflow = $this->getWorkflow($identifier);
             $baseConfig = $workflow->getDefaultConfig();
             if ($baseConfig->isAvailable($requiredAvailability)) {

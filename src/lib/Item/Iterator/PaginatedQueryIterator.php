@@ -5,10 +5,15 @@ declare(strict_types=1);
 namespace AlmaviaCX\Bundle\IbexaImportExport\Item\Iterator;
 
 use AlmaviaCX\Bundle\IbexaImportExport\Accessor\ArrayAccessor;
+use AlmaviaCX\Bundle\IbexaImportExport\Reader\ReaderIteratorInterface;
 use ArrayIterator;
-use Iterator;
+use SeekableIterator;
 
-abstract class PaginatedQueryIterator implements Iterator
+/**
+ * @implements ReaderIteratorInterface<int, ArrayAccessor>
+ * @implements SeekableIterator<int, ArrayAccessor>
+ */
+abstract class PaginatedQueryIterator implements ReaderIteratorInterface, SeekableIterator
 {
     public const DEFAULT_BATCH_SIZE = 25;
     /**
@@ -36,6 +41,9 @@ abstract class PaginatedQueryIterator implements Iterator
         return new ArrayIterator($this->executeQuery($queryString));
     }
 
+    /**
+     * @return array<int, array<string, mixed>>
+     */
     abstract protected function executeQuery(string $queryString): array;
 
     /**
@@ -56,6 +64,8 @@ abstract class PaginatedQueryIterator implements Iterator
     /**
      * @throws \Doctrine\DBAL\Driver\Exception
      * @throws \Doctrine\DBAL\Exception
+     *
+     * @return ArrayAccessor<string, mixed>
      */
     public function current(): ArrayAccessor
     {

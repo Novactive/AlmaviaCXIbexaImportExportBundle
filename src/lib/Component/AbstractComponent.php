@@ -6,6 +6,7 @@ namespace AlmaviaCX\Bundle\IbexaImportExport\Component;
 
 use AlmaviaCX\Bundle\IbexaImportExport\Monolog\WorkflowLoggerInterface;
 use AlmaviaCX\Bundle\IbexaImportExport\Reference\ReferenceBag;
+use AlmaviaCX\Bundle\IbexaImportExport\Workflow\WorkflowState;
 use InvalidArgumentException;
 
 /**
@@ -71,8 +72,8 @@ abstract class AbstractComponent implements ComponentInterface
         $this->logger = $logger;
     }
 
-    public function setReferenceBag(ReferenceBag $referenceBag): void
+    public function setState(WorkflowState $state): void
     {
-        $this->referenceBag = $referenceBag;
+        $this->referenceBag = $state->getReferenceBag();
     }
 }

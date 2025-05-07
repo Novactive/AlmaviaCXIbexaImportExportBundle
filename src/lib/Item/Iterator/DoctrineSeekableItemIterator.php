@@ -4,17 +4,9 @@ declare(strict_types=1);
 
 namespace AlmaviaCX\Bundle\IbexaImportExport\Item\Iterator;
 
-use AlmaviaCX\Bundle\IbexaImportExport\Accessor\ArrayAccessor;
-use AlmaviaCX\Bundle\IbexaImportExport\Reader\ReaderIteratorInterface;
 use Doctrine\DBAL\Connection;
-use Iterator;
-use SeekableIterator;
 
-/**
- * @implements Iterator<int, ArrayAccessor>
- * @implements SeekableIterator<int, ArrayAccessor>
- */
-class DoctrineSeekableItemIterator extends PaginatedQueryIterator implements ReaderIteratorInterface, SeekableIterator
+class DoctrineSeekableItemIterator extends PaginatedQueryIterator
 {
     public function __construct(
         protected Connection $connection,

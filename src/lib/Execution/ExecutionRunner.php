@@ -36,9 +36,7 @@ class ExecutionRunner
 
         $this->eventDispatcher->dispatch(new PreJobRunEvent($execution, $workflow));
 
-        if (null !== $execution->getWorkflowState()) {
-            $workflow->setState($execution->getWorkflowState());
-        }
+        $workflow->setState($execution->getWorkflowState());
         $execution->setStatus(Execution::STATUS_RUNNING);
         $this->executionRepository->save($execution);
 

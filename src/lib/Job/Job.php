@@ -10,6 +10,8 @@ use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\IdGenerator\UlidGenerator;
+use Symfony\Component\Uid\Ulid;
 
 /**
  * @ORM\Entity(repositoryClass="AlmaviaCX\Bundle\IbexaImportExport\Job\JobRepository")
@@ -23,6 +25,13 @@ class Job
      * @ORM\Column
      */
     protected ?int $id = null;
+
+    /**
+     * @ORM\Column(type="ulid", unique=true, nullable=true)
+     * @ORM\GeneratedValue(strategy="CUSTOM")
+     * @ORM\CustomIdGenerator(class=UlidGenerator::class)
+     */
+    protected ?Ulid $ulid = null;
 
     /**
      * @ORM\Column
@@ -76,6 +85,16 @@ class Job
     public function setId(int $id): void
     {
         $this->id = $id;
+    }
+
+    public function getUlid(): ?Ulid
+    {
+        return $this->ulid;
+    }
+
+    public function setUlid(?Ulid $ulid): void
+    {
+        $this->ulid = $ulid;
     }
 
     public function getLabel(): string

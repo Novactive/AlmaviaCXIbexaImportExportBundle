@@ -118,17 +118,18 @@
                 {% if execution.isCancelable() %}
                     <a
                         title="{{ 'job.execution.cancel'|trans|desc('Cancel') }}"
-                        href="{{ path('import_export.job.cancel', {'id': execution.id}) }}"
+                        href="{{ path('import_export.execution.cancel', {'id': execution.id}) }}"
                         class="btn ibexa-btn ibexa-btn--ghost ibexa-btn--small"
                     >
                         <svg class="ibexa-icon ibexa-icon--small ibexa-icon--edit">
                             <use xlink:href="{{ ibexa_icon_path('discard') }}"></use>
                         </svg>
                     </a>
-                {% elseif execution.isRunning()  %}
+                {% endif  %}
+                {% if execution.isRunning()  %}
                     <a
                         title="{{ 'job.execution.pause'|trans|desc('pause') }}"
-                        href="{{ path('import_export.job.pause', {'id': execution.id}) }}"
+                        href="{{ path('import_export.execution.pause', {'id': execution.id}) }}"
                         class="btn ibexa-btn ibexa-btn--ghost ibexa-btn--small"
                     >
                         <svg class="ibexa-icon ibexa-icon--small ibexa-icon--edit">
@@ -138,7 +139,7 @@
                 {% elseif execution.canRun() %}
                     <a
                         title="{{ 'job.execution.run'|trans|desc('Run') }}"
-                        href="{{ path('import_export.job.run', {'id': execution.id}) }}"
+                        href="{{ path('import_export.execution.run', {'id': execution.id}) }}"
                         class="btn ibexa-btn ibexa-btn--ghost ibexa-btn--small"
                     >
                         <svg class="ibexa-icon ibexa-icon--small ibexa-icon--edit">
@@ -206,7 +207,7 @@
 
                 {% if current_execution.isCancelable() %}
                     <a
-                        href="{{ path('import_export.job.cancel', {'id': current_execution.id}) }}"
+                        href="{{ path('import_export.execution.cancel', {'id': current_execution.id}) }}"
                         class="btn ibexa-btn ibexa-btn--ghost ibexa-btn--small"
                     >
                         <svg class="ibexa-icon ibexa-icon--small ibexa-icon--edit">
@@ -216,9 +217,10 @@
                             {{ 'job.execution.cancel'|trans|desc('Cancel') }}
                         </span>
                     </a>
-                {% elseif current_execution.isRunning() %}
+                {% endif %}
+                {% if current_execution.isRunning() %}
                     <a
-                        href="{{ path('import_export.job.pause', {'id': current_execution.id}) }}"
+                        href="{{ path('import_export.execution.pause', {'id': current_execution.id}) }}"
                         class="btn ibexa-btn ibexa-btn--ghost ibexa-btn--small"
                     >
                         <svg class="ibexa-icon ibexa-icon--small ibexa-icon--edit">
@@ -230,7 +232,7 @@
                     </a>
                 {% elseif current_execution.canRun() %}
                     <a
-                            href="{{ path('import_export.job.run', {'id': job.id}) }}"
+                            href="{{ path('import_export.execution.run', {'id': current_execution.id}) }}"
                             class="btn ibexa-btn ibexa-btn--ghost ibexa-btn--small"
                     >
                         <svg class="ibexa-icon ibexa-icon--small ibexa-icon--edit">

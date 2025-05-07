@@ -11,6 +11,7 @@ use AlmaviaCX\Bundle\IbexaImportExport\Job\Job;
 use AlmaviaCX\Bundle\IbexaImportExport\Job\JobService;
 use AlmaviaCX\Bundle\IbexaImportExport\Workflow\WorkflowRegistry;
 use Doctrine\Common\Collections\Criteria;
+use Doctrine\Common\Collections\Selectable;
 use Exception;
 use Ibexa\Contracts\AdminUi\Controller\Controller;
 use Ibexa\Contracts\AdminUi\Notification\TranslatableNotificationHandlerInterface;
@@ -34,6 +35,9 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 
+/**
+ * @SuppressWarnings("PHPMD.TooManyPublicMethods")
+ */
 class JobController extends Controller implements TranslationContainerInterface
 {
     public function __construct(
@@ -137,7 +141,7 @@ class JobController extends Controller implements TranslationContainerInterface
 
         $page = $request->query->get('page') ?? 1;
         $pagerfanta = new Pagerfanta(
-            new CollectionAdapter($executions->matching($criteria))
+            new CollectionAdapter($executions instanceof Selectable ? $executions->matching($criteria) : $executions)
         );
 
         $pagerfanta->setMaxPerPage(5);
@@ -204,7 +208,17 @@ class JobController extends Controller implements TranslationContainerInterface
         ]));
     }
 
-    public function pause(Execution $execution): Response
+    public function runExecution(Execution $execution, int $batchLimit = null): RedirectResponse
+    {
+        $this->jobService->runExecution($execution, $batchLimit);
+
+        return new RedirectResponse($this->generateUrl('import_export.job.execution.view', [
+            'id' => $execution->getJob()->getId(),
+            'executionId' => $execution->getId(),
+        ]));
+    }
+
+    public function pauseExecution(Execution $execution): Response
     {
         $this->jobService->pauseJobExecution($execution);
 
@@ -214,7 +228,7 @@ class JobController extends Controller implements TranslationContainerInterface
         ]));
     }
 
-    public function cancel(Execution $execution): RedirectResponse
+    public function cancelExecution(Execution $execution): RedirectResponse
     {
         $this->jobService->cancelJobExecution($execution);
 
@@ -224,7 +238,7 @@ class JobController extends Controller implements TranslationContainerInterface
         ]));
     }
 
-    public function debug(Execution $execution, int $index): RedirectResponse
+    public function debugExecution(Execution $execution, int $index): RedirectResponse
     {
         $this->jobService->debugJobExecution($execution, $index);
 

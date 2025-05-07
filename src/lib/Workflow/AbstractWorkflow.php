@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace AlmaviaCX\Bundle\IbexaImportExport\Workflow;
 
 use AlmaviaCX\Bundle\IbexaImportExport\Event\BasicEventDispatcherTrait;
+use AlmaviaCX\Bundle\IbexaImportExport\Item\ItemAccessorInterface;
 use AlmaviaCX\Bundle\IbexaImportExport\Monolog\WorkflowLogger;
 use AlmaviaCX\Bundle\IbexaImportExport\Monolog\WorkflowLoggerInterface;
 use AlmaviaCX\Bundle\IbexaImportExport\Reader\ReaderIteratorInterface;
@@ -21,12 +22,15 @@ abstract class AbstractWorkflow implements WorkflowInterface
 {
     use BasicEventDispatcherTrait;
 
+    /**
+     * @var \AlmaviaCX\Bundle\IbexaImportExport\Reader\ReaderIteratorInterface<mixed, ItemAccessorInterface>
+     */
     protected ReaderIteratorInterface $itemsIterator;
     protected ?WorkflowLoggerInterface $logger = null;
     protected WorkflowExecutionConfiguration $configuration;
     protected EventDispatcherInterface $dispatcher;
     protected WorkflowState $state;
-    protected bool $debug = true;
+    protected bool $debug = false;
 
     /**
      * @param \AlmaviaCX\Bundle\IbexaImportExport\Workflow\WorkflowExecutionConfiguration $configuration
@@ -57,7 +61,7 @@ abstract class AbstractWorkflow implements WorkflowInterface
 
         foreach ($this->configuration->getProcessors() as $processor) {
             $processor->setLogger($this->logger);
-            $processor->setReferenceBag($this->state->getReferenceBag());
+            $processor->setState($this->state);
             $processor->prepare();
         }
         foreach ($this->configuration->getWriters() as $id => $writer) {
@@ -67,7 +71,7 @@ abstract class AbstractWorkflow implements WorkflowInterface
         }
         $reader = $this->configuration->getReader();
         $reader->setLogger($this->logger);
-        $reader->setReferenceBag($this->state->getReferenceBag());
+        $reader->setState($this->state);
         $reader->prepare();
         $this->itemsIterator = ($reader)();
 
@@ -91,6 +95,7 @@ abstract class AbstractWorkflow implements WorkflowInterface
 
         if ($this->state->isCompleted()) {
             $this->state->setEndTime(new DateTimeImmutable());
+            $this->state->getCache()->clear();
         }
 
         $this->dispatchEvent(new WorkflowEvent($this), WorkflowEvent::FINISH);
@@ -108,6 +113,7 @@ abstract class AbstractWorkflow implements WorkflowInterface
                 $this->state->getOffset(),
                 $batchLimit
             );
+
             foreach ($limitIterator as $index => $item) {
                 $this->logger->setItemIndex($index + 1);
                 $this->state->getReferenceBag()->resetScope(Reference::SCOPE_ITEM);

@@ -7,11 +7,13 @@ namespace AlmaviaCX\Bundle\IbexaImportExport\Workflow;
 use AlmaviaCX\Bundle\IbexaImportExport\Reference\ReferenceBag;
 use AlmaviaCX\Bundle\IbexaImportExport\Writer\WriterResults;
 use DateTimeImmutable;
+use Doctrine\Common\Collections\ArrayCollection;
 
 class WorkflowState
 {
     /**
-     * @param array<string, WriterResults> $writersResults
+     * @param array<string, WriterResults>   $writersResults
+     * @param ArrayCollection<string, mixed> $cache
      */
     public function __construct(
         protected ?DateTimeImmutable $startTime = null,
@@ -20,6 +22,7 @@ class WorkflowState
         protected int $offset = 0,
         protected array $writersResults = [],
         protected ReferenceBag $referenceBag = new ReferenceBag(),
+        protected ArrayCollection $cache = new ArrayCollection()
     ) {
     }
 
@@ -112,5 +115,27 @@ class WorkflowState
     public function isCompleted(): bool
     {
         return 100 === $this->getProgress();
+    }
+
+    /**
+     * @return ArrayCollection<string, mixed>
+     */
+    public function getCache(): ArrayCollection
+    {
+        if (!isset($this->cache)) {
+            $this->cache = new ArrayCollection();
+        }
+
+        return $this->cache;
+    }
+
+    public function getCacheItem(string $key, mixed $default = null): mixed
+    {
+        $cache = $this->getCache();
+        if (!$cache->containsKey($key)) {
+            $cache->set($key, $default);
+        }
+
+        return $cache->get($key);
     }
 }

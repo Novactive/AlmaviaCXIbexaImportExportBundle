@@ -7,6 +7,8 @@ namespace AlmaviaCX\Bundle\IbexaImportExport\Reader\SalesforceSoql;
 use AlmaviaCX\Bundle\IbexaImportExport\Reader\AbstractReader;
 use AlmaviaCX\Bundle\IbexaImportExport\Reader\ReaderIteratorInterface;
 use AlmaviaCX\Bundle\IbexaImportExport\Salesforce\SalesforceApiClient;
+use AlmaviaCX\Bundle\IbexaImportExport\Workflow\WorkflowState;
+use Doctrine\Common\Collections\ArrayCollection;
 use JMS\TranslationBundle\Model\Message;
 use JMS\TranslationBundle\Translation\TranslationContainerInterface;
 use Symfony\Component\Translation\TranslatableMessage;
@@ -16,13 +18,18 @@ use Symfony\Component\Translation\TranslatableMessage;
  */
 class SalesforceSoqlReader extends AbstractReader implements TranslationContainerInterface
 {
+    /**
+     * @var ArrayCollection<string, mixed>
+     */
+    protected ArrayCollection $cache;
+
     public function __construct(
         protected SalesforceApiClient $apiClient
     ) {
     }
 
     /**
-     * @return \src\lib\Reader\SalesforceSoql\SalesforceSoqlIterator
+     * @return SalesforceSoqlIterator
      */
     public function __invoke(): ReaderIteratorInterface
     {
@@ -35,8 +42,15 @@ class SalesforceSoqlReader extends AbstractReader implements TranslationContaine
             $options->version,
             $options->queryString,
             $options->countQueryString,
-            $options->batchSize
+            $this->cache
         );
+    }
+
+    public function setState(WorkflowState $state): void
+    {
+        $this->cache = $state->getCacheItem('reader_cache', new ArrayCollection());
+
+        parent::setState($state);
     }
 
     public static function getName(): TranslatableMessage

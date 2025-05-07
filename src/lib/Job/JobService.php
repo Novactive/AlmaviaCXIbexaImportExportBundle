@@ -12,6 +12,9 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\Selectable;
 use Ibexa\Contracts\Core\SiteAccess\ConfigResolverInterface;
 
+/**
+ * @SuppressWarnings("PHPMD.TooManyPublicMethods")
+ */
 class JobService
 {
     public function __construct(

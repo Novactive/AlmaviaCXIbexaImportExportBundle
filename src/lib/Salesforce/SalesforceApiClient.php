@@ -17,13 +17,24 @@ class SalesforceApiClient
     ) {
     }
 
+    /**
+     * @param \AlmaviaCX\Bundle\IbexaImportExport\Salesforce\SalesforceApiCredentials $credentials
+     *
+     * @throws \JsonException
+     * @throws \Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface
+     * @throws \Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface
+     * @throws \Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface
+     * @throws \Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface
+     *
+     * @return array<mixed, mixed>
+     */
     public function __invoke(
         string $domain,
         string $version,
         string $path,
         string $method,
         SalesforceApiCredentials $credentials,
-    ) {
+    ): array {
         $url = sprintf(
             'https://%s/services/data/%s%s',
             $domain,
@@ -48,7 +59,7 @@ class SalesforceApiClient
     protected function getBearerToken(
         string $domain,
         SalesforceApiCredentials $credentials
-    ) {
+    ): string {
         $cacheKey = sprintf(
             'salesforce_api_token_%s_%s',
             $domain,
@@ -98,6 +109,17 @@ class SalesforceApiClient
         return $token;
     }
 
+    /**
+     * @param array<string, mixed> $options
+     *
+     * @throws \JsonException
+     * @throws \Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface
+     * @throws \Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface
+     * @throws \Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface
+     * @throws \Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface
+     *
+     * @return array<mixed, mixed>
+     */
     protected function request(string $method, string $url, array $options = []): array
     {
         $response = $this->httpClient->request($method, $url, $options);

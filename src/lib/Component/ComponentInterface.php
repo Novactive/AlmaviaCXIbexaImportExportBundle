@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace AlmaviaCX\Bundle\IbexaImportExport\Component;
 
 use AlmaviaCX\Bundle\IbexaImportExport\Monolog\WorkflowLoggerInterface;
-use AlmaviaCX\Bundle\IbexaImportExport\Reference\ReferenceBag;
+use AlmaviaCX\Bundle\IbexaImportExport\Workflow\WorkflowState;
 use Symfony\Component\Translation\TranslatableMessage;
 
 /**
@@ -36,9 +36,9 @@ interface ComponentInterface
 
     public function setLogger(WorkflowLoggerInterface $logger): void;
 
-    public function setReferenceBag(ReferenceBag $referenceBag): void;
-
     public function prepare(): void;
 
     public function finish(): void;
+
+    public function setState(WorkflowState $state): void;
 }

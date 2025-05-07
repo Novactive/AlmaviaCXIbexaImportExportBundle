@@ -110,14 +110,14 @@ class Execution
     }
 
     /**
-     * @return \Doctrine\Common\Collections\Selectable<string, ExecutionRecord>
+     * @return \Doctrine\Common\Collections\Selectable<string, ExecutionRecord>|null
      */
-    public function getRecordsForLevel(int $level): Selectable
+    public function getRecordsForLevel(int $level): ?Selectable
     {
         $criteria = new Criteria();
         $criteria->where(new Comparison('level', '=', $level));
 
-        return $this->loggerRecords->matching($criteria);
+        return $this->loggerRecords instanceof Selectable ? $this->loggerRecords->matching($criteria) : null;
     }
 
     /**
